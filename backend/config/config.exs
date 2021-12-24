@@ -17,6 +17,16 @@ config :backend, BackendWeb.Endpoint,
   pubsub_server: Backend.PubSub,
   live_view: [signing_salt: "uxCfrTwc"]
 
+  config :backend, Backend.Guardian,
+  allowed_algos: ["HS512"],
+  issuer: "Backend",
+  verify_issuer: true,
+  secret_key: System.get_env("JWT_SECRET_KEY"),
+  token_ttl: %{
+    "access" => {3, :minutes},
+    "refresh" => {4, :days}
+  }
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

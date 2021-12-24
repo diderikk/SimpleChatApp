@@ -1,12 +1,26 @@
 defmodule BackendWeb.Router do
   use BackendWeb, :router
+  use Plug.ErrorHandler
+
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_cookies, encrypted: ["guardian_default_token"]
+    plug :decrypt_request_cookies
+  end
+
+  pipeline :auth do
+    plug Backend.AuthAccessPipeline
   end
 
   scope "/api", BackendWeb do
     pipe_through :api
+
+    post "/signin", SessionController, :signin
+    post "/signup", SessionController, :signup
+
+    pipe_through :auth
+    resources "/users", UserController, except: [:new, :edit, :create]
   end
 
   # Enables LiveDashboard only for development
@@ -36,5 +50,18 @@ defmodule BackendWeb.Router do
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  defp decrypt_request_cookies(conn, _opts) do
+    conn
+    |> Map.put(:req_cookies, conn.cookies)
+  end
+
+  defp handle_errors(conn, %{reason: %{message: message}}) do
+    conn |> json(%{error: message}) |> halt()
+  end
+
+  defp handle_errors(conn, _) do
+    conn |> put_status(400) |> json(%{error: "Bad Request"}) |> halt()
   end
 end
