@@ -19,6 +19,7 @@ defmodule Backend.Accounts do
       [%User{}, ...]
 
   """
+  @spec list_users() :: list()
   def list_users do
     Repo.all(User)
   end
@@ -37,6 +38,7 @@ defmodule Backend.Accounts do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_user!(number()) :: %User{}
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
@@ -51,6 +53,7 @@ defmodule Backend.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_user(map()) :: {:ok, %User{}} | {:error, %Ecto.Changeset{}}
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.registration_changeset(attrs)
@@ -69,6 +72,7 @@ defmodule Backend.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_user(%User{}, map()) :: {:ok, %User{}} | {:error, %Ecto.Changeset{}}
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
@@ -87,6 +91,7 @@ defmodule Backend.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_user(%User{}) :: {:ok, %User{}} | {:error, %Ecto.Changeset{}}
   def delete_user(%User{} = user) do
     Repo.delete_all(from c in "users_chats", where: c.user_id == ^user.id)
     Repo.delete(user)
@@ -101,6 +106,7 @@ defmodule Backend.Accounts do
       %Ecto.Changeset{data: %User{}}
 
   """
+  @spec change_user(%User{}, map()) :: %Ecto.Changeset{data: %User{}}
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end

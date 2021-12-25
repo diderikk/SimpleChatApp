@@ -13,10 +13,12 @@
 alias Backend.Accounts.User
 alias Backend.Repo
 alias Backend.Medias.Chat
+alias Backend.Medias
 
-user = Repo.insert!(%User{name: "Test", email: "test123@test.com", password: "Password123"}) |> Repo.preload(:chats)
-Repo.insert!(%User{name: "Test1", email: "test13@test.com", password: "Password123"})
-chat = Repo.insert!(%Chat{})
+user1 = Repo.insert!(%User{name: "Test", email: "test123@test.com", password: "Password123"}) |> Repo.preload(:chats)
+user2 = Repo.insert!(%User{name: "Test1", email: "test13@test.com", password: "Password123"})
+chat1 = Repo.insert!(%Chat{})
 
-user = Ecto.Changeset.change(user) |> Ecto.Changeset.put_assoc(:chats, [chat])
-Repo.update! user
+user1 = Ecto.Changeset.change(user1) |> Ecto.Changeset.put_assoc(:chats, [chat1])
+user1 = Repo.update! user1
+Medias.send_message(user1, chat1.id, %{content: "Test message"})

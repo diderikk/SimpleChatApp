@@ -14,6 +14,7 @@ defmodule Backend.Accounts.User do
     field :salt, :string
     field :token_version, :integer, default: 0
     many_to_many :chats, Backend.Medias.Chat, join_through: "users_chats", on_delete: :delete_all
+    has_many :messages, Backend.Medias.Message, on_delete: :nilify_all
 
 
     timestamps()
