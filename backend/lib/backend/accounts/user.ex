@@ -4,7 +4,7 @@ defmodule Backend.Accounts.User do
 
   @salt_length 32
 
-  @derive {Inspect, only: [:id, :email, :name]}
+  @derive {Inspect, only: [:id, :email, :name, :chats]}
   schema "users" do
     field :email, :string
     field :is_admin, :boolean, default: false
@@ -13,6 +13,8 @@ defmodule Backend.Accounts.User do
     field :password, :string, virtual: true
     field :salt, :string
     field :token_version, :integer, default: 0
+    many_to_many :chats, Backend.Medias.Chat, join_through: "users_chats", on_delete: :delete_all
+
 
     timestamps()
   end

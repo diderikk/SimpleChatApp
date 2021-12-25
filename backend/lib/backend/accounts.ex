@@ -8,6 +8,7 @@ defmodule Backend.Accounts do
 
   alias Backend.Accounts.User
   alias Backend.Guardian
+  alias Backend.Medias.Chat
 
   @doc """
   Returns the list of users.
@@ -87,6 +88,7 @@ defmodule Backend.Accounts do
 
   """
   def delete_user(%User{} = user) do
+    Repo.delete_all(from c in "users_chats", where: c.user_id == ^user.id)
     Repo.delete(user)
   end
 
@@ -105,6 +107,10 @@ defmodule Backend.Accounts do
 
   @doc """
   Authentication for user by finding the user from email and verifying the given password with the users hash
+
+  ## Examples
+    iex> authenticate("username", "password")
+    {access_token, refresh_token}
   """
   @spec authenticate(binary, binary) :: {:error, binary()} | {:ok, binary(), binary()}
   def authenticate(email, password) when is_binary(email) and is_binary(password) do
@@ -122,4 +128,61 @@ defmodule Backend.Accounts do
   end
 
   def authenticate(_, _), do: {:error, "Could not log in"}
+
+  @doc """
+  Returns all chats that a given user exists in
+
+  ## Example
+    iex> get_user_chats(user_id)
+    [
+      %Backend.Medias.Chat{}
+    ]
+  """
+  @spec get_user_chats(number()) :: list()
+  def get_user_chats(user_id) do
+    Repo.all(
+      from c in Chat,
+      join: u in "users_chats",
+      on: c.id == u.chat_id
+      and u.has_accepted and u.user_id == ^user_id
+    )
+  end
+
+  @doc """
+  Returns all chats that a given user is invited to
+
+  ## Example
+    iex> get_invited_chats(user_id)
+    [
+      %Backend.Medias.Chat{}
+    ]
+  """
+  @spec get_invited_chats(number()) :: list()
+  def get_invited_chats(user_id) do
+    Repo.all(
+      from c in Chat,
+      join: u in "users_chats",
+      on: c.id == u.chat_id
+      and not u.has_accepted and u.user_id == ^user_id
+    )
+  end
+
+  @doc """
+  Creates a chat and adds the creator of the chat and inviting the users given by ids in the list
+
+  ## Example
+    iex> add_user_chat(1, [2,3,4])
+
+    { :ok, %Backend.Medias.Chat{} }
+
+  """
+  @spec add_user_chat(number(), list()) :: %Chat{}
+  def add_user_chat(user_id, user_id_list) when is_list(user_id_list) do
+    chat = Repo.insert!(%Chat{})
+    creator = [%{user_id: user_id, chat_id: chat.id, has_accepted: true}]
+    invited_users = Enum.map(user_id_list, fn id -> %{user_id: id, chat_id: chat.id} end)
+    Repo.insert_all("users_chats", creator ++ invited_users)
+
+    chat
+  end
 end

@@ -2,11 +2,13 @@ defmodule Backend.AccountsTest do
   use Backend.DataCase
 
   alias Backend.Accounts
+  alias Backend.Accounts.User
+
+  import Backend.AccountsFixtures
+  import Backend.MediaFixtures
 
   describe "users" do
-    alias Backend.Accounts.User
 
-    import Backend.AccountsFixtures
 
     @invalid_attrs %{email: nil, is_admin: nil, name: nil, password: nil, password_hash: nil, salt: nil, token_version: nil}
 
@@ -84,6 +86,25 @@ defmodule Backend.AccountsTest do
     test "authenticate/2 does not authenticate when it doesnt find email" do
       user = user_fixture()
       assert {:error, _reason } = Accounts.authenticate("user.email@gmail.com", user.password)
+    end
+
+    test "get_user_chats/1 returns all users in chat" do
+      user = user_fixture()
+      chat = chat_fixture(user.id)
+
+      assert Accounts.get_user_chats(user.id) == [chat]
+
+    end
+
+    test "get_user_chats/1 returns empty when user does not exist" do
+      assert Accounts.get_user_chats(0) == []
+    end
+
+    test "add_user_chat/2 returns a chat with the creator as a member" do
+      user = user_fixture()
+      chat = Accounts.add_user_chat(user.id, [])
+
+      assert Accounts.get_user_chats(user.id) == [chat]
     end
   end
 end
