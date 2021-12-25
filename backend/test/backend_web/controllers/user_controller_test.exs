@@ -5,20 +5,10 @@ defmodule BackendWeb.UserControllerTest do
 
   alias Backend.Accounts.User
 
-  @create_attrs %{
-    email: "some email",
-    is_admin: true,
-    name: "some name",
-    password_hash: "some password_hash",
-    salt: "some salt",
-    token_version: 42
-  }
   @update_attrs %{
     email: "some updated email",
-    is_admin: false,
+    is_admin: true,
     name: "some updated name",
-    password_hash: "some updated password_hash",
-    salt: "some updated salt",
     token_version: 43
   }
   @invalid_attrs %{email: nil, is_admin: nil, name: nil, password_hash: nil, salt: nil, token_version: nil}
@@ -34,30 +24,6 @@ defmodule BackendWeb.UserControllerTest do
     end
   end
 
-  describe "create user" do
-    test "renders user when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.user_path(conn, :create), user: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
-
-      conn = get(conn, Routes.user_path(conn, :show, id))
-
-      assert %{
-               "id" => ^id,
-               "email" => "some email",
-               "is_admin" => true,
-               "name" => "some name",
-               "password_hash" => "some password_hash",
-               "salt" => "some salt",
-               "token_version" => 42
-             } = json_response(conn, 200)["data"]
-    end
-
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.user_path(conn, :create), user: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
-
   describe "update user" do
     setup [:create_user]
 
@@ -70,11 +36,7 @@ defmodule BackendWeb.UserControllerTest do
       assert %{
                "id" => ^id,
                "email" => "some updated email",
-               "is_admin" => false,
                "name" => "some updated name",
-               "password_hash" => "some updated password_hash",
-               "salt" => "some updated salt",
-               "token_version" => 43
              } = json_response(conn, 200)["data"]
     end
 

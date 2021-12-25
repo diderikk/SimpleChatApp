@@ -19,7 +19,7 @@ defmodule BackendWeb.Router do
     post "/signin", SessionController, :signin
     post "/signup", SessionController, :signup
 
-    pipe_through :auth
+    if Mix.env() not in [:test], do: pipe_through :auth
     resources "/users", UserController, except: [:new, :edit, :create]
   end
 

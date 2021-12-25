@@ -22,7 +22,7 @@ defmodule BackendWeb.SessionController do
       _ ->
         conn
         |> put_status(:unauthorized)
-        |> render("401.json")
+        |> render("401.json", reason: "Unauthorized")
     end
   end
 

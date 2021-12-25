@@ -19,7 +19,7 @@ defmodule Backend.Accounts.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password_hash, :salt, :is_admin, :name, :token_version])
+    |> cast(attrs, [:email, :is_admin, :name, :token_version])
     |> validate_required([:email, :password_hash, :salt, :is_admin, :name, :token_version])
     |> validate_number(:token_version, greater_than_or_equal_to: 0)
     |> validate_length(:password_hash, min: 10)
@@ -29,7 +29,7 @@ defmodule Backend.Accounts.User do
   @doc false
   def registration_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password, :is_admin, :name, :token_version])
+    |> cast(attrs, [:email, :password, :name])
     |> validate_required(:name)
     |> validate_password()
     |> validate_email()
@@ -67,6 +67,8 @@ defmodule Backend.Accounts.User do
         changeset
         |> put_change(:password_hash, Pbkdf2.hash_pwd_salt(password <> salt, rounds: 200_000))
         |> put_change(:salt, salt)
+
+      _ -> changeset
     end
   end
 

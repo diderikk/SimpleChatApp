@@ -108,15 +108,16 @@ defmodule Backend.Accounts do
   """
   @spec authenticate(binary, binary) :: {:error, binary()} | {:ok, binary(), binary()}
   def authenticate(email, password) when is_binary(email) and is_binary(password) do
-    with user <- Repo.get_by!(User, email: email) do
+    with %User{} = user <- Repo.get_by(User, email: email) do
       if User.valid_password?(password, user) do
         {:ok, user} = update_user(user, %{token_version: user.token_version + 1})
-        IO.inspect user
         { access_token, refresh_token } = Guardian.create_access_and_refresh_tokens(user)
         {:ok, access_token, refresh_token}
       else
         {:error, "Could not log in"}
       end
+    else
+      _ -> {:error, "No user with that email"}
     end
   end
 

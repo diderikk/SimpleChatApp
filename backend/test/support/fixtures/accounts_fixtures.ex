@@ -7,7 +7,7 @@ defmodule Backend.AccountsFixtures do
   @doc """
   Generate a unique user email.
   """
-  def unique_user_email, do: "some email#{System.unique_integer([:positive])}"
+  def unique_user_email, do: "some.email@gmail#{System.unique_integer([:positive])}.com"
 
   @doc """
   Generate a user.
@@ -20,6 +20,7 @@ defmodule Backend.AccountsFixtures do
         is_admin: true,
         name: "some name",
         password_hash: "some password_hash",
+        password: "Password123",
         salt: "some salt",
         token_version: 42
       })

@@ -1,0 +1,41 @@
+name: backend-CI
+
+on: 
+  push:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+
+  tests:
+    name: Application tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: backend_test
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Elixir and install dependencies
+        uses: actions/setup-elixir@v1
+        with:
+          otp-version: '22.2'
+          elixir-version: '1.12.2'
+      - name: Setup dependencies and run tests
+        working-directory: backend
+        env:
+          SECRET_KEY_BASE: secret
+        run: |
+          mix deps.get
+          mix test
