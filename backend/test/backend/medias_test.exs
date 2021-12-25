@@ -11,6 +11,10 @@ defmodule Backend.MediasTest do
 
     test "get_chat!/1 returns the chat given with id" do
       chat = chat_fixture(user_fixture().id)
+      chat =
+      chat
+      |> Map.put(:messages, [])
+      |> Map.put(:users, [user_fixture().name])
 
       assert Medias.get_chat!(chat.id) == chat
     end
