@@ -2,6 +2,7 @@ defmodule BackendWeb.UserControllerTest do
   use BackendWeb.ConnCase
 
   import Backend.AccountsFixtures
+  import Backend.MediasFixtures
 
   alias Backend.Accounts.User
 
@@ -59,8 +60,20 @@ defmodule BackendWeb.UserControllerTest do
     end
   end
 
+    # describe "get user chats" do
+    #   setup [:create_chat]
+    #   test "get user chats for a user"
+    # end
+
   defp create_user(_) do
     user = user_fixture()
     %{user: user}
+  end
+
+  defp create_chat(_) do
+    user = user_fixture()
+    chat = chat_fixture(user.id)
+
+    %{chat: chat, user: user}
   end
 end

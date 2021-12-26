@@ -20,7 +20,12 @@ defmodule BackendWeb.Router do
     post "/signup", SessionController, :signup
 
     if Mix.env() not in [:test], do: pipe_through :auth
+    get "/users/chats", UserController, :chat_list
+    get "/users/invited_chats", UserController, :invited_list
+    post "/users/chats", UserController, :create_chat
     resources "/users", UserController, except: [:new, :edit, :create]
+    get "/chat/:id", ChatController, :show
+
   end
 
   # Enables LiveDashboard only for development

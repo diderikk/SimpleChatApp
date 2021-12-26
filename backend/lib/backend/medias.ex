@@ -25,10 +25,11 @@ defmodule Backend.Medias do
   """
   @spec get_chat!(number()) :: %Chat{}
   def get_chat!(chat_id) do
-    message_query = from m in Message, order_by: [m.inserted_at, m.id], select: [:content, :inserted_at]
+    message_query = from m in Message, order_by: [m.inserted_at, m.id], select: [:content, :inserted_at, :user_id]
     user_query = from u in User, select: u.name
+    member_query = from u in User, join: uc in "users_chats",on: u.id == uc.user_id and uc.has_accepted and uc.chat_id == ^chat_id, select: u.name
     Repo.get!(Chat, chat_id)
-    |> Repo.preload([messages: {message_query, [user: user_query]}, users: user_query])
+    |> Repo.preload([messages: {message_query, [user: user_query]}, users: member_query])
   end
 
 

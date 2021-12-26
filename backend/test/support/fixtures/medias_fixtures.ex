@@ -1,4 +1,4 @@
-defmodule Backend.MediaFixtures do
+defmodule Backend.MediasFixtures do
   @moduledoc """
   This module defines test helpers for creating
   entities via the `Backend.Media` context.

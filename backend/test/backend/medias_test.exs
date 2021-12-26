@@ -3,9 +3,10 @@ defmodule Backend.MediasTest do
 
   alias Backend.Medias
   alias Backend.Medias.Chat
+  alias Backend.Medias.Message
 
   import Backend.AccountsFixtures
-  import Backend.MediaFixtures
+  import Backend.MediasFixtures
 
   describe "chats" do
 
@@ -27,6 +28,14 @@ defmodule Backend.MediasTest do
 
     test "delete_chat/1 deletes chat that does not exist" do
       assert_raise FunctionClauseError, fn -> Medias.delete_chat(nil) end
+    end
+
+    test "send_message/3 sends a message in a chat from a user" do
+      user = user_fixture()
+      chat = chat_fixture(user.id)
+      assert {:ok, %Message{} = message} = Medias.send_message(user, chat.id, %{content: "Test"})
+      assert is_map(message)
+      assert message.content == "Test"
     end
   end
 

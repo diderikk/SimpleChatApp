@@ -31,8 +31,6 @@ defmodule Backend.AuthAccessPipeline do
     {:ok, token} = find_token_from_cookies(conn, opts)
     {:ok, %{"token_version" => token_version_from_token}} = Backend.Guardian.decode_and_verify(token, %{})
     %User{token_version: user_token_version} = Backend.Guardian.Plug.current_resource(conn)
-    IO.inspect user_token_version
-    IO.inspect token_version_from_token
     if token_version_from_token == user_token_version do
        conn
     else

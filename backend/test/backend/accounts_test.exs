@@ -5,7 +5,7 @@ defmodule Backend.AccountsTest do
   alias Backend.Accounts.User
 
   import Backend.AccountsFixtures
-  import Backend.MediaFixtures
+  import Backend.MediasFixtures
 
   describe "users" do
 
@@ -91,6 +91,7 @@ defmodule Backend.AccountsTest do
     test "get_user_chats/1 returns all users in chat" do
       user = user_fixture()
       chat = chat_fixture(user.id)
+      chat = Map.put(chat, :users, [user.name])
 
       assert Accounts.get_user_chats(user.id) == [chat]
 
@@ -103,6 +104,7 @@ defmodule Backend.AccountsTest do
     test "add_user_chat/2 returns a chat with the creator as a member" do
       user = user_fixture()
       chat = Accounts.add_user_chat(user.id, [])
+      chat = Map.put(chat, :users, [user.name])
 
       assert Accounts.get_user_chats(user.id) == [chat]
     end

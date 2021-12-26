@@ -2,13 +2,15 @@ defmodule Backend.Accounts do
   @moduledoc """
   The Accounts context.
   """
-
   import Ecto.Query, warn: false
   alias Backend.Repo
 
   alias Backend.Accounts.User
   alias Backend.Guardian
   alias Backend.Medias.Chat
+
+  @user_query from u in User, select: u.name
+
 
   @doc """
   Returns the list of users.
@@ -148,10 +150,10 @@ defmodule Backend.Accounts do
   def get_user_chats(user_id) do
     Repo.all(
       from c in Chat,
-      join: u in "users_chats",
-      on: c.id == u.chat_id
-      and u.has_accepted and u.user_id == ^user_id
-    )
+      join: uc in "users_chats",
+      on: c.id == uc.chat_id
+      and uc.has_accepted and uc.user_id == ^user_id
+    ) |> Repo.preload(users: @user_query)
   end
 
   @doc """
@@ -170,7 +172,7 @@ defmodule Backend.Accounts do
       join: u in "users_chats",
       on: c.id == u.chat_id
       and not u.has_accepted and u.user_id == ^user_id
-    )
+    ) |> Repo.preload(users: @user_query)
   end
 
   @doc """
@@ -179,16 +181,18 @@ defmodule Backend.Accounts do
   ## Example
     iex> add_user_chat(1, [2,3,4])
 
-    { :ok, %Backend.Medias.Chat{} }
+    %Backend.Medias.Chat{}
 
   """
   @spec add_user_chat(number(), list()) :: %Chat{}
-  def add_user_chat(user_id, user_id_list) when is_list(user_id_list) do
+  def add_user_chat(user_id, user_email_list) when is_list(user_email_list) do
+    user_id_list = Repo.all(from u in User, where: u.email in ^user_email_list, select: u.id)
     chat = Repo.insert!(%Chat{})
     creator = [%{user_id: user_id, chat_id: chat.id, has_accepted: true}]
     invited_users = Enum.map(user_id_list, fn id -> %{user_id: id, chat_id: chat.id} end)
     Repo.insert_all("users_chats", creator ++ invited_users)
 
     chat
+    |> Repo.preload(users: @user_query)
   end
 end
