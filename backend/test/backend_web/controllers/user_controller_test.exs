@@ -5,6 +5,7 @@ defmodule BackendWeb.UserControllerTest do
   import Backend.MediasFixtures
 
   alias Backend.Accounts.User
+  alias Backend.Medias.Chat
 
   @update_attrs %{
     email: "some updated email",
@@ -60,10 +61,76 @@ defmodule BackendWeb.UserControllerTest do
     end
   end
 
-    # describe "get user chats" do
-    #   setup [:create_chat]
-    #   test "get user chats for a user"
-    # end
+  describe "get user chats" do
+    setup [:create_chat]
+    test "get user chats for a user", %{conn: conn, chat: %Chat{id: id}, user: %User{name: name} = user} do
+      conn = conn
+      |> Backend.Guardian.Plug.put_current_resource(user)
+      |> get(Routes.user_path(conn, :chat_list))
+
+      assert %{
+        "data" => [
+          %{
+            "id" => ^id,
+            "users" => [
+              ^name
+            ]
+          }
+        ]
+      } = json_response(conn, 200)
+    end
+  end
+
+  describe "create new chat" do
+    setup [:create_user]
+    test "create user chat with existing user", %{conn: conn, user: %User{name: name} = user} do
+      conn = conn
+      |> Backend.Guardian.Plug.put_current_resource(user)
+      |> post(Routes.user_path(conn, :create_chat), %{user_list: []})
+
+      assert %{
+        "id" => id,
+        "users" => [
+          ^name
+        ]
+      } = json_response(conn, 201)
+
+      assert is_number(id)
+    end
+
+    test "create user test with existing users", %{conn: conn, user: %User{name: name1} = user} do
+      %User{email: email, name: name2} = user_fixture()
+      conn = conn
+      |> Backend.Guardian.Plug.put_current_resource(user)
+      |> post(Routes.user_path(conn, :create_chat), %{user_list: [email]})
+
+      assert %{
+        "id" => id,
+        "users" => [
+          ^name1,
+          ^name2
+        ]
+      } = json_response(conn, 201)
+
+      assert is_number(id)
+    end
+
+    test "create user chat with non-existing users", %{conn: conn, user: %User{name: name} = user} do
+      conn = conn
+      |> Backend.Guardian.Plug.put_current_resource(user)
+      |> post(Routes.user_path(conn, :create_chat), %{user_list: ["not_a_user@gmail.com"]})
+
+      assert %{
+        "id" => id,
+        "users" => [
+          ^name
+        ]
+      } = json_response(conn, 201)
+
+      assert is_number(id)
+    end
+
+  end
 
   defp create_user(_) do
     user = user_fixture()
