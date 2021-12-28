@@ -25,8 +25,6 @@ defmodule Backend.AuthAccessPipeline do
 
 
 
-
-
   defp verify_token_version(conn, opts) do
     {:ok, token} = find_token_from_cookies(conn, opts)
     {:ok, %{"token_version" => token_version_from_token}} = Backend.Guardian.decode_and_verify(token, %{})

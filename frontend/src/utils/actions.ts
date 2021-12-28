@@ -23,14 +23,17 @@ interface SignUpResponse {
 export const signIn = async (
   email: string,
   password: string
-): Promise<void> => {
+): Promise<boolean> => {
   try {
     const data = { email, password } as SignIn;
     const response = await axios.post("/signin", data);
     localStorage.setItem("token", response.data.token);
-    axios.defaults.headers.common["Authorization"] = response.data.token;
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + response.data.token;
+    return true;
   } catch (error) {
     //Error handling
+    return false;
   }
 };
 
@@ -38,16 +41,28 @@ export const signUp = async (
   username: string,
   email: string,
   password: string
-): Promise<UserInterface | null> => {
+): Promise<UserInterface | undefined> => {
   try {
     const data = { user: { email, password, name: username } } as SignUp;
 
     const response = await axios.post<SignUpResponse>("/signup", data);
     localStorage.setItem("token", response.data.token);
-    axios.defaults.headers.common["Authorization"] = response.data.token;
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + response.data.token;
     return response.data.user;
   } catch (error) {
     //Error handling
-    return null;
+    return undefined;
+  }
+};
+
+export const getUser = async (
+  id: number
+): Promise<UserInterface | undefined> => {
+  try {
+    const response = await axios.get<UserInterface>(`/users/${id}`);
+    return response.data;
+  } catch (error) {
+    return undefined;
   }
 };

@@ -39,7 +39,6 @@ defmodule BackendWeb.SessionController do
   end
 
 
-
   @spec put_refresh_cookie(Plug.Conn.t(), binary()) :: Plug.Conn.t()
   def put_refresh_cookie(conn, refresh_token) do
     conn
