@@ -92,21 +92,39 @@ defmodule Backend.AccountsTest do
       user = user_fixture()
       chat = chat_fixture(user.id)
       chat = Map.put(chat, :users, [user.name])
+      chat = Map.put(chat, :messages, [])
 
-      assert Accounts.get_user_chats(user.id) == [chat]
+      assert Accounts.get_chats(user.id) == [{chat, true}]
 
     end
 
     test "get_user_chats/1 returns empty when user does not exist" do
-      assert Accounts.get_user_chats(0) == []
+      assert Accounts.get_chats(0) == []
     end
 
     test "add_user_chat/2 returns a chat with the creator as a member" do
       user = user_fixture()
       chat = Accounts.add_user_chat(user.id, [])
       chat = Map.put(chat, :users, [user.name])
+      chat = Map.put(chat, :messages, [])
 
-      assert Accounts.get_user_chats(user.id) == [chat]
+      assert Accounts.get_chats(user.id) == [{chat, true}]
+    end
+
+    test "accept_chat/2 accepts a chat" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+      chat = Accounts.add_user_chat(user1.id, [user2.email])
+      assert Accounts.accept_chat(user2.id, chat.id) == {1, nil}
+      assert [_chat] = Accounts.get_chats(user2.id)
+    end
+
+    test "decline_test/2 declines a chat" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+      chat = Accounts.add_user_chat(user1.id, [user2.email])
+      assert Accounts.decline_chat(user2.id, chat.id) == {1, nil}
+      assert [] = Accounts.get_chats(user2.id)
     end
   end
 end

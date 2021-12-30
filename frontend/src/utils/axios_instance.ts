@@ -1,4 +1,5 @@
 import axios from "axios";
+import { history } from "./routing";
 
 const instance = axios.create({
   baseURL: "http://localhost:4000/api",
@@ -18,9 +19,7 @@ if (token !== null) {
 instance.defaults.validateStatus = (status: number) => {
   return status >= 200 && status < 300;
 };
-
 instance.interceptors.response.use(undefined, (error) => {
-  console.log("HELLO");
   if (
     axios.isAxiosError(error) &&
     (error.response?.status === 403 || error.response?.status === 401)
@@ -33,6 +32,9 @@ instance.interceptors.response.use(undefined, (error) => {
         "Bearer " + error.response.data["new_token"];
 
       return instance.request(error.config);
+    } else {
+      history.push("/signin");
+      history.go(0);
     }
   }
   return Promise.reject(error);

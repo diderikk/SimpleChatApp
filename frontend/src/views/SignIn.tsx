@@ -1,8 +1,8 @@
-import { Button, Center, Input, Spacer, Stack, Text } from "@chakra-ui/react";
+import { Button, Center, Input, Spacer, Text, Link } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useForm } from "../utils/useForm";
 import { signIn } from "../utils/actions";
-import { useNavigate } from "react-router-dom";
+import {history} from "../utils/routing"
 
 interface SignInForm {
   email: string;
@@ -17,7 +17,6 @@ export const SignIn: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [signInError, setSignInError] = useState<string>("");
-  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,8 +29,8 @@ export const SignIn: React.FC = () => {
       setSignInError("Wrong email or password");
       return;
     }
-
-    navigate("/");
+    history.push("/chatlist");
+    history.go(0);
   };
 
   return (
@@ -76,7 +75,7 @@ export const SignIn: React.FC = () => {
             mb="25px"
           />
           <Spacer />
-          <Stack h="10vh" alignItems="center">
+          <Center h="10vh">
             <Button
               cursor="pointer"
               colorScheme="cyan"
@@ -92,7 +91,8 @@ export const SignIn: React.FC = () => {
             <Text fontSize="md" color="red.700">
               {signInError}
             </Text>
-          </Stack>
+          </Center>
+          <Text fontSize="md">No account? <Link color="cyan.700" href="/signup">Sign Up</Link></Text>
         </Center>
       </form>
     </Center>

@@ -1,26 +1,37 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Router, Route, Routes } from "react-router-dom";
 import { SignUp } from "./views/SignUp";
 import { UserContext } from "./context/UserContext";
 import User from "./interfaces/user.interface";
 import { useState } from "react";
 import { SignIn } from "./views/SignIn";
 import { ChatList } from "./views/ChatList";
+import { Center } from "@chakra-ui/react";
+import { history } from "./utils/routing";
 
 function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
 
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
-      <div className="App">
-        <Router>
-          <Routes>
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/chatlist" element={<ChatList />} />
-          </Routes>
-        </Router>
-      </div>
-    </UserContext.Provider>
+    <Center
+      h="100vh"
+      w="100%"
+      py="30px"
+      pb="10vh"
+      bg="tomato"
+      color="white"
+      fontSize="2xl"
+    >
+      <UserContext.Provider value={{ user, setUser }}>
+          <Router navigator={history} location={history.location}>
+            <Routes>
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/chatlist" element={<ChatList />} />
+            </Routes>
+          </Router>
+      </UserContext.Provider>
+    </Center>
   );
 }
 

@@ -1,6 +1,7 @@
 import axios from "./axios_instance";
 import UserInterface from "../interfaces/user.interface";
 import User from "../interfaces/user.interface";
+import ListChat from "../interfaces/listChat.interface"
 
 interface SignIn {
   email: string;
@@ -18,6 +19,11 @@ interface SignUp {
 interface SignUpResponse {
   token: string;
   user: User;
+}
+
+interface UserListResponse {
+  chats: ListChat[],
+  invited_chats: ListChat[]
 }
 
 export const signIn = async (
@@ -56,13 +62,12 @@ export const signUp = async (
   }
 };
 
-export const getUser = async (
-  id: number
-): Promise<UserInterface | undefined> => {
-  try {
-    const response = await axios.get<UserInterface>(`/users/${id}`);
+export const getUserList = async (): Promise<UserListResponse | undefined> => {
+  try{
+    const response = await axios.get<UserListResponse>("/users/chats");
     return response.data;
-  } catch (error) {
+  } catch(error) {
+    // TODO: ERror handling
     return undefined;
   }
-};
+}

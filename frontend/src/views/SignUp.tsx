@@ -1,4 +1,4 @@
-import { Button, Center, Input, Spacer, Stack, Text } from "@chakra-ui/react";
+import { Button, Center, Input, Link, Spacer, Stack, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useForm } from "../utils/useForm";
 import {
@@ -8,7 +8,7 @@ import {
   validateUsername,
 } from "../utils/signUpValidation";
 import { signUp } from "../utils/actions";
-import { useNavigate } from "react-router-dom";
+import {history} from "../utils/routing"
 
 interface RegisterForm {
   username: string;
@@ -30,7 +30,6 @@ export const SignUp: React.FC = () => {
   const [passwordError, setPasswordErrror] = useState<string>("");
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,7 +48,8 @@ export const SignUp: React.FC = () => {
       return;
     }
 
-    navigate("/");
+    history.push("/chatlist");
+    history.go(0);
   };
 
   const validateAll = () => {
@@ -181,9 +181,13 @@ export const SignUp: React.FC = () => {
             w="20vh"
             loadingText="Submitting"
             isLoading={isLoading}
+            mb="10px"
           >
             Submit
           </Button>
+          <Spacer />
+          <Text fontSize="md">Already have an account? <Link color="cyan.700" href="/signin">Sign In</Link></Text>
+
         </Center>
       </form>
     </Center>

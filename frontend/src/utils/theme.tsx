@@ -5,7 +5,15 @@ const theme = extendTheme({
     heading: 'Open Sans',
     body: 'Open Sans',
 	input: 'Open Sans',
+  
   },
+  styles: {
+    global: {
+      body: {
+        bg: "tomato"
+      }
+    }
+  }
 })
 
 export default theme
