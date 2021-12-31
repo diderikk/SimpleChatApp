@@ -7,7 +7,6 @@ interface Props {
 }
 
 export const ChatListItem: React.FC<Props> = ({ chat }) => {
-	
   const truncUsersText = (users: string[]): string => {
     let usersText = users.join(", ");
     if (usersText.length > 30) return usersText.substring(0, 27) + "...";
@@ -26,8 +25,9 @@ export const ChatListItem: React.FC<Props> = ({ chat }) => {
       w={{ base: "20rem", md: "30rem" }}
       h={{ base: "7rem", md: "11rem" }}
       borderRadius="lg"
-	  justifyContent="flex-start"
-	  my="20px"
+      justifyContent="flex-start"
+      my="20px"
+      cursor="pointer"
     >
       <HStack>
         <Image

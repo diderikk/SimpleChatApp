@@ -20,11 +20,32 @@ export const ChatList: React.FC = () => {
     return chatList.map((chat) => <ChatListItem chat={chat} key={chat.id} />);
   }, [chatList]);
 
+  const moveChatItem = useCallback(
+    (chat: ListChat) => {
+      setInvitedList(invitedList.filter((item) => item.id !== chat.id));
+      setChatList([chat, ...chatList]);
+      setChatSelected(true);
+    },
+    [invitedList, chatList]
+  );
+
+  const removeChatItem = useCallback(
+    (chat: ListChat) => {
+      setInvitedList(invitedList.filter((item) => item.id !== chat.id));
+    },
+    [invitedList]
+  );
+
   const invitedListMapped = useMemo(() => {
     return invitedList.map((chat) => (
-      <InvitedListItem chat={chat} key={chat.id} />
+      <InvitedListItem
+        removeChatItem={removeChatItem}
+        moveChatItem={moveChatItem}
+        chat={chat}
+        key={chat.id}
+      />
     ));
-  }, [invitedList]);
+  }, [invitedList, moveChatItem, removeChatItem]);
 
   const fetchChatList = useCallback(async () => {
     const response = await getUserList();
@@ -71,6 +92,7 @@ export const ChatList: React.FC = () => {
       fontSize="2xl"
       flexDirection="column"
       justifyContent="flex-start"
+      userSelect="none"
     >
       <HStack>
         <SelectButton
@@ -84,8 +106,7 @@ export const ChatList: React.FC = () => {
           content="Invited"
         />
       </HStack>
-      {(chatSelected) ? chatListMapped : invitedListMapped}
-
+      {chatSelected ? chatListMapped : invitedListMapped}
     </Center>
   );
 };
