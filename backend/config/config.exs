@@ -24,7 +24,8 @@ config :backend, BackendWeb.Endpoint,
   secret_key: System.get_env("JWT_SECRET_KEY"),
   token_ttl: %{
     "access" => {3, :minutes},
-    "refresh" => {4, :days}
+    "refresh" => {4, :days},
+    "channel" => {3, :minutes}
   }
 
 # Configures the mailer

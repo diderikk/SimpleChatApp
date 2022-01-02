@@ -16,7 +16,8 @@ defmodule BackendWeb.ChatView do
     %{
       content: message.content,
       at: message.inserted_at,
-      user: message.user
+      user: message.user,
+      isMe: message.is_me
     }
   end
 

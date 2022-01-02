@@ -1,5 +1,5 @@
 import axios from "axios";
-import { history } from "./routing";
+import { navigate } from "./routing";
 
 const instance = axios.create({
   baseURL: "http://localhost:4000/api",
@@ -30,11 +30,9 @@ instance.interceptors.response.use(undefined, (error) => {
         "Bearer " + error.response.data["new_token"];
       error.config.headers!["Authorization"] =
         "Bearer " + error.response.data["new_token"];
-
       return instance.request(error.config);
     } else {
-      history.push("/signin");
-      history.go(0);
+      navigate("/signin");
     }
   }
   return Promise.reject(error);

@@ -56,4 +56,9 @@ defmodule Backend.Guardian do
 
     {access_token, refresh_token}
   end
+
+  @spec create_channel_token(%User{}, any) :: {:error, any} | {:ok, binary, map}
+  def create_channel_token(%User{} = user, chat_id) do
+   Guardian.encode_and_sign(user, %{chat_id: chat_id}, token_type: "channel", ttl: {3, :minutes})
+  end
 end

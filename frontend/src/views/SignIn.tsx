@@ -2,7 +2,7 @@ import { Button, Center, Input, Spacer, Text, Link } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useForm } from "../utils/useForm";
 import { signIn } from "../utils/actions";
-import {history} from "../utils/routing"
+import { navigate } from "../utils/routing";
 
 interface SignInForm {
   email: string;
@@ -29,8 +29,7 @@ export const SignIn: React.FC = () => {
       setSignInError("Wrong email or password");
       return;
     }
-    history.push("/chatlist");
-    history.go(0);
+    navigate("/chatlist");
   };
 
   return (
@@ -84,7 +83,7 @@ export const SignIn: React.FC = () => {
               w="20vh"
               loadingText="Submitting"
               isLoading={isLoading}
-			  mb="10px"
+              mb="10px"
             >
               Submit
             </Button>
@@ -92,7 +91,12 @@ export const SignIn: React.FC = () => {
               {signInError}
             </Text>
           </Center>
-          <Text fontSize="md">No account? <Link color="cyan.700" href="/signup">Sign Up</Link></Text>
+          <Text fontSize="md">
+            No account?{" "}
+            <Link color="cyan.700" href="/signup">
+              Sign Up
+            </Link>
+          </Text>
         </Center>
       </form>
     </Center>

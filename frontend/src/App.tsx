@@ -7,6 +7,7 @@ import { SignIn } from "./views/SignIn";
 import { ChatList } from "./views/ChatList";
 import { Center } from "@chakra-ui/react";
 import { history } from "./utils/routing";
+import { ChatView } from "./views/ChatView";
 
 function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
@@ -17,7 +18,6 @@ function App() {
       h="100vh"
       w="100%"
       py="30px"
-      pb="10vh"
       bg="tomato"
       color="white"
       fontSize="2xl"
@@ -28,6 +28,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/chatlist" element={<ChatList />} />
+              <Route path="/chats/:chatId" element={<ChatView />} />
             </Routes>
           </Router>
       </UserContext.Provider>

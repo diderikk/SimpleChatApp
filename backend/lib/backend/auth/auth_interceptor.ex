@@ -5,7 +5,8 @@ defmodule Backend.Plug.InterceptRefresh do
 
   def call(conn, opts) do
     with {:ok, token} <- fetch_token_from_header(conn, opts),
-         {:ok, _claims} <- Backend.Guardian.decode_and_verify(token) do
+         {:ok, %{"typ" => "access", "token_version" => _token_version}} <-
+           Backend.Guardian.decode_and_verify(token) do
       conn
     else
       _error ->
@@ -21,9 +22,9 @@ defmodule Backend.Plug.InterceptRefresh do
 
   defp fetch_token_from_header(conn, opts) do
     header_name = Keyword.get(opts, :header_name, "authorization")
-    case get_req_header(conn, header_name) do
-      ["Bearer " <> token | _headers ] -> {:ok, token}
 
+    case get_req_header(conn, header_name) do
+      ["Bearer " <> token | _headers] -> {:ok, token}
       error -> error
     end
   end

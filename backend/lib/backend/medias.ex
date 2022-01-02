@@ -23,13 +23,17 @@ defmodule Backend.Medias do
       iex> get_chat!(456)
       ** (Ecto.NoResultsError)
   """
-  @spec get_chat!(number()) :: %Chat{}
-  def get_chat!(chat_id) do
+  @spec get_chat!(number(), number()) :: %Chat{}
+  def get_chat!(chat_id, user_id) do
     message_query = from m in Message, order_by: [m.inserted_at, m.id], select: [:content, :inserted_at, :user_id]
     user_query = from u in User, select: u.name
-    member_query = from u in User, join: uc in "users_chats",on: u.id == uc.user_id and uc.has_accepted and uc.chat_id == ^chat_id, select: u.name
-    Repo.get!(Chat, chat_id)
+    member_query = from u in User, join: uc in "users_chats",
+    on: u.id == uc.user_id and uc.has_accepted and uc.chat_id == ^chat_id, select: u.name
+    chat = Repo.get!(Chat, chat_id)
     |> Repo.preload([messages: {message_query, [user: user_query]}, users: member_query])
+
+    messages = Enum.map(chat.messages, fn message -> Map.put_new(message, :is_me, user_id == message.user_id) end)
+    Map.put(chat, :messages, messages)
   end
 
 
@@ -55,15 +59,15 @@ defmodule Backend.Medias do
 
   ## Examples
 
-      iex> send_message(user, chat_id, %{content, at})
+      iex> persist_message(user, chat_id, %{content, at})
       {:ok, %Message{}}
 
-      iex> send_message(%{field: bad_value})
+      iex> persist_message(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec send_message(%User{}, number(), map()) :: {:ok, %Message{}} | {:error, %Ecto.Changeset{}}
-  def send_message(%User{id: user_id}, chat_id, attrs) do
+  @spec persist_message(number(), number(), map()) :: {:ok, %Message{}} | {:error, %Ecto.Changeset{}}
+  def persist_message(user_id, chat_id, attrs) do
     %Message{user_id: user_id, chat_id: chat_id}
     |> Message.changeset(attrs)
     |> Repo.insert()

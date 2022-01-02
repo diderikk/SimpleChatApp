@@ -10,20 +10,22 @@ defmodule Backend.MediasTest do
 
   describe "chats" do
 
-    test "get_chat!/1 returns the chat given with id" do
-      chat = chat_fixture(user_fixture().id)
+    test "get_chat!/2 returns the chat given with id" do
+      id = user_fixture().id
+      chat = chat_fixture(id)
       chat =
       chat
       |> Map.put(:messages, [])
       |> Map.put(:users, [user_fixture().name])
 
-      assert Medias.get_chat!(chat.id) == chat
+      assert Medias.get_chat!(chat.id, id) == chat
     end
 
     test "delete_chat/1 deletes the chat" do
-      chat = chat_fixture(user_fixture().id)
+      user_id = user_fixture().id
+      chat = chat_fixture(user_id)
       assert {:ok, %Chat{}} = Medias.delete_chat(chat)
-      assert_raise Ecto.NoResultsError, fn -> Medias.get_chat!(chat.id) end
+      assert_raise Ecto.NoResultsError, fn -> Medias.get_chat!(chat.id, user_id) end
     end
 
     test "delete_chat/1 deletes chat that does not exist" do

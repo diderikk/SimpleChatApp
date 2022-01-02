@@ -1,4 +1,12 @@
-import { Button, Center, Input, Link, Spacer, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  Input,
+  Link,
+  Spacer,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useForm } from "../utils/useForm";
 import {
@@ -8,7 +16,7 @@ import {
   validateUsername,
 } from "../utils/signUpValidation";
 import { signUp } from "../utils/actions";
-import {history} from "../utils/routing"
+import { navigate } from "../utils/routing";
 
 interface RegisterForm {
   username: string;
@@ -48,8 +56,7 @@ export const SignUp: React.FC = () => {
       return;
     }
 
-    history.push("/chatlist");
-    history.go(0);
+    navigate("/chatlist");
   };
 
   const validateAll = () => {
@@ -186,8 +193,12 @@ export const SignUp: React.FC = () => {
             Submit
           </Button>
           <Spacer />
-          <Text fontSize="md">Already have an account? <Link color="cyan.700" href="/signin">Sign In</Link></Text>
-
+          <Text fontSize="md">
+            Already have an account?{" "}
+            <Link color="cyan.700" href="/signin">
+              Sign In
+            </Link>
+          </Text>
         </Center>
       </form>
     </Center>

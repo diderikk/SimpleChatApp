@@ -20,4 +20,6 @@ defmodule BackendWeb.SessionView do
       }
     }
   end
+
+  def render("channel.json", %{token: token, user_id: user_id}), do: %{token: token, user_id: user_id}
 end

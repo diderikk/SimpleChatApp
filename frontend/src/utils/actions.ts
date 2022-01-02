@@ -2,6 +2,7 @@ import axios from "./axios_instance";
 import UserInterface from "../interfaces/user.interface";
 import User from "../interfaces/user.interface";
 import ListChat from "../interfaces/listChat.interface";
+import { Chat } from "../interfaces/chat.interface";
 
 interface SignIn {
   email: string;
@@ -24,6 +25,11 @@ interface SignUpResponse {
 interface UserListResponse {
   chats: ListChat[];
   invited_chats: ListChat[];
+}
+
+interface TokenResponse {
+  token: string;
+  user_id: number;
 }
 
 export const signIn = async (
@@ -91,3 +97,22 @@ export const declineInvitation = async (chatId: number): Promise<boolean> => {
     return false;
   }
 };
+
+export const getChat = async (chatId: number): Promise<Chat | undefined> => {
+  try {
+    const response = await axios.get<Chat>(`/chats/${chatId}`);
+    return response.data;
+  } catch (error) {
+    // TODO: Error handling
+    return undefined;
+  }
+};
+
+export const getChannelToken = async (chatId: number): Promise<TokenResponse | undefined> => {
+  try{
+    const response = await axios.get<TokenResponse>(`/chats/${chatId}/channel_token`);
+    return response.data;
+  } catch(error) {
+    return undefined;
+  }
+}
