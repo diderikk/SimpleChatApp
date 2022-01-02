@@ -32,10 +32,10 @@ defmodule Backend.MediasTest do
       assert_raise FunctionClauseError, fn -> Medias.delete_chat(nil) end
     end
 
-    test "send_message/3 sends a message in a chat from a user" do
+    test "persist_message/3 persists a message in a chat from a user" do
       user = user_fixture()
       chat = chat_fixture(user.id)
-      assert {:ok, %Message{} = message} = Medias.send_message(user, chat.id, %{content: "Test"})
+      assert {:ok, %Message{} = message} = Medias.persist_message(user.id, chat.id, %{content: "Test"})
       assert is_map(message)
       assert message.content == "Test"
     end
