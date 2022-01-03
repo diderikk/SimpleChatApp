@@ -44,7 +44,13 @@ defmodule BackendWeb.SessionController do
   def channel_token(conn, %{"id" => chat_id}) do
     with user <- Backend.Guardian.Plug.current_resource(conn),
          {:ok, channel_token, _claims} <- Backend.Guardian.create_channel_token(user, chat_id) do
-      render(conn, "channel.json", token: channel_token, user_id: user.id)
+          if Backend.Authorization.authorize_chat(user, String.to_integer(chat_id)) do
+            render(conn, "channel.json", token: channel_token, user_id: user.id)
+          else
+            conn
+            |> put_status(:forbidden)
+            |> render("403.json")
+          end
     else
       _ ->
         conn

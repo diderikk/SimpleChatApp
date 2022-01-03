@@ -11,21 +11,7 @@ defmodule Backend.Accounts do
   alias Backend.Medias.Message
 
   @user_query from u in User, select: u.name
-  @message_query from m in Message, order_by: [desc: m.inserted_at], limit: 1, select: [:content]
-
-  @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
-  """
-  @spec list_users() :: list()
-  def list_users do
-    Repo.all(User)
-  end
+  @message_query from m in Message, order_by: [desc: m.inserted_at], select: [:content]
 
   @doc """
   Gets a single user.
@@ -83,24 +69,6 @@ defmodule Backend.Accounts do
   end
 
   @doc """
-  Deletes a user.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  @spec delete_user(%User{}) :: {:ok, %User{}} | {:error, %Ecto.Changeset{}}
-  def delete_user(%User{} = user) do
-    Repo.delete_all(from c in "users_chats", where: c.user_id == ^user.id)
-    Repo.delete(user)
-  end
-
-  @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
 
   ## Examples
@@ -138,7 +106,6 @@ defmodule Backend.Accounts do
 
   def authenticate(_, _), do: {:error, "Could not log in"}
 
-
   @doc """
   Returns all chats that a given user is connected to
 
@@ -154,18 +121,16 @@ defmodule Backend.Accounts do
   """
   @spec get_chats(number()) :: list()
   def get_chats(user_id) do
-    {chats, has_accepted_list} =
-      Repo.all(
-        from c in Chat,
-          join: u in "users_chats",
-          on: c.id == u.chat_id and u.user_id == ^user_id,
-          select: {c, u.has_accepted}
-      )
-      |> Enum.unzip()
+    chats = Repo.all(
+      from c in Chat,
+        join: u in "users_chats",
+        on: c.id == u.chat_id and u.user_id == ^user_id,
+        select: {c, u.has_accepted},
+        preload: [users: ^@user_query, messages: ^@message_query]
+    )
 
-    chats
-    |> Repo.preload(users: @user_query, messages: @message_query)
-    |> Enum.zip(has_accepted_list)
+    Enum.map(chats,
+    fn {chat, _has_accepted} -> Map.put(chat, :messages, if(List.first(chat.messages) != nil, do: List.first(chat.messages), else: [])) end)
   end
 
   @doc """
@@ -189,7 +154,6 @@ defmodule Backend.Accounts do
     |> Repo.preload(users: @user_query)
   end
 
-
   @doc """
     Accepts a chat a user is invited to
 
@@ -201,7 +165,7 @@ defmodule Backend.Accounts do
   """
   @spec accept_chat(number(), number()) :: {number(), nil | list()}
   def accept_chat(user_id, chat_id) do
-    (from uc in "users_chats", where: uc.chat_id == ^chat_id and uc.user_id == ^user_id)
+    from(uc in "users_chats", where: uc.chat_id == ^chat_id and uc.user_id == ^user_id)
     |> Repo.update_all(set: [has_accepted: true])
   end
 
@@ -216,7 +180,7 @@ defmodule Backend.Accounts do
   """
   @spec decline_chat(number(), number()) :: {number(), nil | list()}
   def decline_chat(user_id, chat_id) do
-    (from uc in "users_chats", where: uc.chat_id == ^chat_id and uc.user_id == ^user_id)
+    from(uc in "users_chats", where: uc.chat_id == ^chat_id and uc.user_id == ^user_id)
     |> Repo.delete_all()
   end
 end

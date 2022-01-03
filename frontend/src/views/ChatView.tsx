@@ -20,6 +20,7 @@ import { Socket, Channel } from "phoenix";
 import { Message } from "../interfaces/message.interface";
 
 interface MessageInput {
+  id: number;
   content: string;
   user: string;
   at: string;
@@ -46,7 +47,6 @@ export const ChatView: React.FC = () => {
   );
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  // const 
 
   socket.onOpen(() => {
     setChatChannel(socket.channel("chat:" + parseInt(params["chatId"]!)));
@@ -88,7 +88,6 @@ export const ChatView: React.FC = () => {
     const channelTokenResponse = await getChannelToken(
       parseInt(params["chatId"]!)
     );
-    console.log(response);
     if (!response || !channelTokenResponse) navigate("/chatlist");
     setChannelToken(channelTokenResponse?.token!);
     setUserId(channelTokenResponse?.user_id!);

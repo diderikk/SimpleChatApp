@@ -14,6 +14,7 @@ defmodule BackendWeb.ChatView do
 
   def render("message.json", %{message: message}) do
     %{
+      id: message.id,
       content: message.content,
       at: message.inserted_at,
       user: message.user,
@@ -25,4 +26,11 @@ defmodule BackendWeb.ChatView do
   def render("401.json", %{reason: reason}) do
     render_one(reason, ErrorView, "401.json")
   end
+
+  def render("403.json", _params) do
+    %{
+      error: "Forbidden"
+    }
+  end
+
 end

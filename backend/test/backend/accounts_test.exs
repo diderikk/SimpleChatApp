@@ -12,10 +12,6 @@ defmodule Backend.AccountsTest do
 
     @invalid_attrs %{email: nil, is_admin: nil, name: nil, password: nil, password_hash: nil, salt: nil, token_version: nil}
 
-    test "list_users/0 returns all users" do
-      user = Map.put(user_fixture(), :password, nil)
-      assert Accounts.list_users() == [user]
-    end
 
     test "get_user!/1 returns the user with given id" do
       user = Map.put(user_fixture(), :password, nil)
@@ -59,12 +55,6 @@ defmodule Backend.AccountsTest do
       user = Map.put(user_fixture(), :password, nil)
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
       assert user == Accounts.get_user!(user.id)
-    end
-
-    test "delete_user/1 deletes the user" do
-      user = user_fixture()
-      assert {:ok, %User{}} = Accounts.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
     end
 
     test "change_user/1 returns a user changeset" do

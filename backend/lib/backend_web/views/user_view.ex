@@ -2,14 +2,6 @@ defmodule BackendWeb.UserView do
   use BackendWeb, :view
   alias BackendWeb.UserView
 
-  def render("index.json", %{users: users}) do
-    %{data: render_many(users, UserView, "user.json")}
-  end
-
-  def render("show.json", %{user: user}) do
-    %{data: render_one(user, UserView, "user.json")}
-  end
-
   def render("chat_list.json", %{chats: chats, invited_chats: invited_chats}) do
     %{
       chats: render_many(chats, UserView, "chat.json", as: :chat),

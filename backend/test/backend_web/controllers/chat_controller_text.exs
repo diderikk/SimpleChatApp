@@ -14,8 +14,10 @@ defmodule BackendWeb.ChatControllerTest do
 
   describe "get chat" do
     setup [:create_chat]
-    test "returns chat when chat exists", %{conn: conn, chat: %Chat{id: id}, user: %User{name: name}} do
-      conn = get(conn, Routes.chat_path(conn, :show, id))
+    test "returns chat when chat exists", %{conn: conn, chat: %Chat{id: id}, user: %User{name: name} = user} do
+      conn = conn
+      |> Backend.Guardian.Plug.put_current_resource(user)
+      |> get(Routes.chat_path(conn, :show, id))
       assert %{
         "id" => ^id,
         "users" => [^name],
@@ -23,18 +25,27 @@ defmodule BackendWeb.ChatControllerTest do
       } = json_response(conn, 200)
     end
 
-    test "returns 404 not found when chat does not exist", %{conn: conn, chat: %Chat{id: id}, user: _user} do
-      assert_error_sent 404, fn -> get(conn, Routes.chat_path(conn, :show, id+1)) end
-    end
-
     test "returns chat when chat exists with message", %{conn: conn, chat: %Chat{id: id}, user: %User{name: name} = user} do
-      Medias.send_message(user, id, %{content: "some message"})
-      conn = get(conn, Routes.chat_path(conn, :show, id))
+      Medias.persist_message(user.id, id, %{content: "some message"})
+      conn = conn
+      |> Backend.Guardian.Plug.put_current_resource(user)
+      |> get(Routes.chat_path(conn, :show, id))
       assert %{
         "id" => ^id,
         "users" => [^name],
         "messages" => [%{"content" => "some message", "user" => ^name}]
       } = json_response(conn, 200)
+
+    end
+
+    test "authorization", %{conn: conn, chat: %Chat{id: id}, user: %User{} = user} do
+      conn = conn
+      |> Backend.Guardian.Plug.put_current_resource(user)
+      |> get(Routes.chat_path(conn, :show, id+1))
+
+      assert %{
+        "error" => "Forbidden"
+      } = json_response(conn, 403)
 
     end
   end

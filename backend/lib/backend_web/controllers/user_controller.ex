@@ -2,39 +2,8 @@ defmodule BackendWeb.UserController do
   use BackendWeb, :controller
 
   alias Backend.Accounts
-  alias Backend.Accounts.User
 
   action_fallback BackendWeb.FallbackController
-
-  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def index(conn, _params) do
-    users = Accounts.list_users()
-    render(conn, "index.json", users: users)
-  end
-
-  @spec show(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    render(conn, "show.json", user: user)
-  end
-
-  @spec update(any, map) :: {:error, Ecto.Changeset.t()} | Plug.Conn.t()
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, "show.json", user: user)
-    end
-  end
-
-  @spec delete(any, map) :: {:error, Ecto.Changeset.t()} | Plug.Conn.t()
-  def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{}} <- Accounts.delete_user(user) do
-      send_resp(conn, :no_content, "")
-    end
-  end
 
   @spec chat_list(Plug.Conn.t(), any) :: Plug.Conn.t()
   def chat_list(conn, _params) do

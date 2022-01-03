@@ -1,6 +1,7 @@
 import { Center, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import Chat from "../interfaces/listChat.interface";
 import userIcon from "../assets/man.png";
+import {navigate} from "../utils/routing"
 
 interface Props {
   chat: Chat;
@@ -28,6 +29,7 @@ export const ChatListItem: React.FC<Props> = ({ chat }) => {
       justifyContent="flex-start"
       my="20px"
       cursor="pointer"
+      onClick={() => navigate(`/chats/${chat.id}`)}
     >
       <HStack>
         <Image

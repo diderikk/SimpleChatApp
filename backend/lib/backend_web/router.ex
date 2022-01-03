@@ -24,7 +24,6 @@ defmodule BackendWeb.Router do
     post "/users/chats", UserController, :create_chat
     put "/users/invited_chats/:id", UserController, :accept_chat
     delete "/users/invited_chats/:id", UserController, :decline_chat
-    resources "/users", UserController, except: [:new, :edit, :create]
     get "/chats/:id", ChatController, :show
     get "/chats/:id/channel_token", SessionController, :channel_token
 
