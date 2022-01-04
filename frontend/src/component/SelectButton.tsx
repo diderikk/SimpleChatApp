@@ -14,7 +14,7 @@ export const SelectButton: React.FC<Props> = ({ isSelected, setIsSelected, conte
 
   return (
     <Button
-      width={{base: "150px", md: "300px"}}
+      width={{base: "110px", md: "225px", lg: "275px"}}
       my="30px"
       color="black"
       _focus={{ outline: "none" }}

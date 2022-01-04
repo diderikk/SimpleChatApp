@@ -9,14 +9,7 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
-import {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MessageItem } from "../component/MessageItem";
 import { Chat } from "../interfaces/chat.interface";
@@ -25,6 +18,7 @@ import { navigate } from "../utils/routing";
 import sendIcon from "../assets/send.png";
 import { Socket, Channel } from "phoenix";
 import { Message } from "../interfaces/message.interface";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 interface MessageInput {
   id: number;
@@ -109,7 +103,7 @@ export const ChatView: React.FC = () => {
 
   useEffect(() => {
     if (!chatChannel && socket) {
-      const channel = socket.channel("chat:" + parseInt(params["chatId"]!),{});
+      const channel = socket.channel("chat:" + parseInt(params["chatId"]!), {});
       channel.on("joined", (resp) => {
         console.log("Joined", resp);
       });
@@ -130,7 +124,7 @@ export const ChatView: React.FC = () => {
           console.log("Unable to join", resp);
         });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatChannel, socket]);
 
   useEffect(() => {
@@ -196,7 +190,16 @@ export const ChatView: React.FC = () => {
       justifyContent="flex-start"
       flexDirection="column"
     >
-      <Text fontSize={{ base: "2xl", md: "4xl" }}>
+      <ArrowBackIcon
+        fontSize={{ base: "2xl", md: "4xl" }}
+        position="absolute"
+        left="100px"
+        top="67px"
+        onClick={() => navigate("/chatlist")}
+        cursor="pointer"
+      />
+
+      <Text fontSize={{ base: "2xl", md: "4xl" }} ml="">
         {userText(chat?.users!)}
       </Text>
 

@@ -1,16 +1,28 @@
-import { Center, HStack, Spinner } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  HStack,
+  Spinner,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getUserList } from "../utils/actions";
 import ListChat from "../interfaces/listChat.interface";
 import { ChatListItem } from "../component/ChatListItem";
 import { SelectButton } from "../component/SelectButton";
 import { InvitedListItem } from "../component/InvitedListItem";
+import { CreateChatModal } from "../component/CreateChatModal";
 
 export const ChatList: React.FC = () => {
   const [chatList, setChatList] = useState<ListChat[]>([]);
   const [invitedList, setInvitedList] = useState<ListChat[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chatSelected, setChatSelected] = useState<boolean>(true);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const addChatListItem = (chatListItem: ListChat) => {
+    setChatList([chatListItem, ...chatList]);
+  }
 
   const invertSelect = () => {
     setChatSelected(!chatSelected);
@@ -105,7 +117,16 @@ export const ChatList: React.FC = () => {
           setIsSelected={invertSelect}
           content="Invited"
         />
+        <Button
+          width={{ base: "110px", md: "225px", lg: "300px" }}
+          colorScheme="blue"
+          onClick={onOpen}
+        >
+          Create
+        </Button>
       </HStack>
+      <CreateChatModal onClose={onClose} isOpen={isOpen} addChatListItem={addChatListItem} />
+
       {chatSelected ? chatListMapped : invitedListMapped}
     </Center>
   );

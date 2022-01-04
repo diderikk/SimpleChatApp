@@ -126,3 +126,12 @@ export const getNextPage = async (chatId: number, page: number): Promise<Message
     return [];
   }
 }
+
+export const createChat = async (userEmails: string[]): Promise<ListChat | undefined> => {
+  try{
+    const response = await axios.post<ListChat>("/users/chats", {user_list: userEmails});
+    return response.data;
+  } catch(error) {
+    return undefined;
+  }
+}
