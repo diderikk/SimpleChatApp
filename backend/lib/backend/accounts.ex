@@ -130,7 +130,7 @@ defmodule Backend.Accounts do
     )
 
     Enum.map(chats,
-    fn {chat, _has_accepted} -> Map.put(chat, :messages, if(List.first(chat.messages) != nil, do: List.first(chat.messages), else: [])) end)
+    fn {chat, has_accepted} -> {Map.put(chat, :messages, if(List.first(chat.messages) != nil, do: [List.first(chat.messages)], else: [])), has_accepted} end)
   end
 
   @doc """

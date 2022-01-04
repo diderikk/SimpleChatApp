@@ -10,6 +10,8 @@ defmodule Backend.Medias do
   alias Backend.Accounts.User
   alias Backend.Medias.Message
 
+  @user_query from u in User, select: u.name
+
   @doc """
   Gets a single chat
 
@@ -25,33 +27,56 @@ defmodule Backend.Medias do
   """
   @spec get_chat!(number(), number()) :: %Chat{}
   def get_chat!(chat_id, user_id) do
-    message_query = from m in Message, order_by: [m.inserted_at, m.id], select: [:content, :inserted_at, :user_id]
-    user_query = from u in User, select: u.name
-    member_query = from u in User, join: uc in "users_chats",
-    on: u.id == uc.user_id and uc.has_accepted and uc.chat_id == ^chat_id, select: u.name
-    chat = Repo.get!(Chat, chat_id)
-    |> Repo.preload([messages: {message_query, [user: user_query]}, users: member_query])
+    message_query =
+      from m in Message,
+        order_by: [desc: m.inserted_at],
+        select: [:content, :inserted_at, :user_id, :id],
+        limit: 15
 
-    messages = Enum.map(chat.messages, fn message -> Map.put_new(message, :is_me, user_id == message.user_id) end)
+    member_query =
+      from u in User,
+        join: uc in "users_chats",
+        on: u.id == uc.user_id and uc.has_accepted and uc.chat_id == ^chat_id,
+        select: u.name
+
+    chat =
+      Repo.get!(Chat, chat_id)
+      |> Repo.preload(messages: {message_query, [user: @user_query]}, users: member_query)
+
+    messages =
+      Enum.reverse(chat.messages)
+      |> Enum.map(fn message -> Map.put_new(message, :is_me, user_id == message.user_id)
+      end)
+
     Map.put(chat, :messages, messages)
   end
 
-
   @doc """
-  Deletes a chat.
+  Returns a list of messages from a chat
 
   ## Examples
 
-      iex> delete_chat(chat)
-      {:ok, %Chat{}}
+    iex> get_page_messages(1, 1, 1)
 
-      iex> delete_chat(chat)
-      {:error, %Ecto.Changeset{}}
+    [
+      %Message{}
+      ...
+    ]
   """
-  @spec delete_chat(%Chat{}) :: {:ok, %Chat{}} | {:error, %Ecto.Changeset{}}
-  def delete_chat(%Chat{} = chat) do
-    Repo.delete_all(from c in "users_chats", where: c.chat_id == ^chat.id)
-    Repo.delete(chat)
+
+  @spec get_page_messages(number(), number(), number()) :: list
+  def get_page_messages(chat_id, user_id, page) do
+    Repo.all(
+      from m in Message,
+        where: m.chat_id == ^chat_id,
+        order_by: [desc: m.id],
+        select: [:content, :inserted_at, :user_id, :id],
+        offset: 15 * ^page,
+        limit: 15,
+        preload: [user: ^@user_query]
+    )
+    |> Enum.reverse()
+    |> Enum.map(fn message -> Map.put_new(message, :is_me, user_id == message.user_id) end)
   end
 
   @doc """
@@ -66,11 +91,11 @@ defmodule Backend.Medias do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec persist_message(number(), number(), map()) :: {:ok, %Message{}} | {:error, %Ecto.Changeset{}}
+  @spec persist_message(number(), number(), map()) ::
+          {:ok, %Message{}} | {:error, %Ecto.Changeset{}}
   def persist_message(user_id, chat_id, attrs) do
     %Message{user_id: user_id, chat_id: chat_id}
     |> Message.changeset(attrs)
     |> Repo.insert()
   end
-
 end

@@ -12,6 +12,10 @@ defmodule BackendWeb.ChatView do
     }
   end
 
+  def render("page.json", %{messages: messages}) do
+    render_many(messages, ChatView, "message.json", as: :message)
+  end
+
   def render("message.json", %{message: message}) do
     %{
       id: message.id,

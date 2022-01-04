@@ -3,6 +3,7 @@ import UserInterface from "../interfaces/user.interface";
 import User from "../interfaces/user.interface";
 import ListChat from "../interfaces/listChat.interface";
 import { Chat } from "../interfaces/chat.interface";
+import { Message } from "../interfaces/message.interface";
 
 interface SignIn {
   email: string;
@@ -114,5 +115,14 @@ export const getChannelToken = async (chatId: number): Promise<TokenResponse | u
     return response.data;
   } catch(error) {
     return undefined;
+  }
+}
+
+export const getNextPage = async (chatId: number, page: number): Promise<Message[]> => {
+  try{
+    const response = await axios.get<Message[]>(`/chats/${chatId}/${page}`);
+    return response.data;
+  } catch(error) {
+    return [];
   }
 }

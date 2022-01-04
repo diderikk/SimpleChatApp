@@ -9,11 +9,18 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import { MessageItem } from "../component/MessageItem";
 import { Chat } from "../interfaces/chat.interface";
-import { getChat, getChannelToken } from "../utils/actions";
+import { getChat, getChannelToken, getNextPage } from "../utils/actions";
 import { navigate } from "../utils/routing";
 import sendIcon from "../assets/send.png";
 import { Socket, Channel } from "phoenix";
@@ -33,31 +40,16 @@ export const ChatView: React.FC = () => {
   const [messageList, setMessageList] = useState<Message[]>([]);
   const [messageInput, setMessageInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
   const [channelToken, setChannelToken] = useState<string>("");
   const [userId, setUserId] = useState<number>(0);
-  const socket = useMemo(
-    () =>
-      new Socket("ws://localhost:4000/socket", {
-        params: { token: channelToken },
-      }),
-    [channelToken]
-  );
+  const [socket, setSocket] = useState<Socket>(null!);
   const [chatChannel, setChatChannel] = useState<Channel | undefined>(
     undefined
   );
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  socket.onOpen(() => {
-    setChatChannel(socket.channel("chat:" + parseInt(params["chatId"]!)));
-  });
-  socket.onError(async () => {
-    const token = await getChannelToken(parseInt(params["chatId"]!));
-    if (!token) navigate("/chatlist");
-
-    setChannelToken(token?.token!);
-  });
-  socket.onClose(() => console.log("CLOSE"));
+  const [page, setPage] = useState<number>(1);
 
   const userText = useCallback((users: string[]) => {
     let text = users.join(", ");
@@ -97,51 +89,78 @@ export const ChatView: React.FC = () => {
     setIsLoading(false);
   }, [params]);
 
-  const addMessageToChat = useCallback((message: Message) => {
-    setMessageList([...messageList, message]);
-  }, [messageList]);
-
   useEffect(() => {
-    if (!socket.isConnected() && channelToken) {
+    if (!socket && channelToken) {
+      const socket = new Socket("ws://localhost:4000/socket", {
+        params: { token: channelToken },
+      });
+      socket.onError(async () => {
+        const token = await getChannelToken(parseInt(params["chatId"]!));
+        if (!token) navigate("/chatlist");
+
+        setChannelToken(token?.token!);
+      });
+
       socket.connect();
+      setSocket(socket);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, channelToken]);
 
   useEffect(() => {
-    if (
-      chatChannel &&
-      chatChannel.state !== "joined" &&
-      chatChannel.state !== "joining"
-    ) {
-      chatChannel
-        ?.join()
-        .receive("ok", (resp) => {
-          console.log("Joined successfully", resp);
-        })
-        .receive("error", (resp) => {
-          console.log("Unable to join", resp);
-        });
-      chatChannel.on("joined", (resp) => {
+    if (!chatChannel && socket) {
+      const channel = socket.channel("chat:" + parseInt(params["chatId"]!),{});
+      channel.on("joined", (resp) => {
         console.log("Joined", resp);
       });
-      chatChannel.on("message", (messageInput: MessageInput) => {
+      channel.on("message", (messageInput: MessageInput) => {
         const message = {
           ...messageInput,
           isMe: messageInput.user_id === userId,
         } as Message;
-        addMessageToChat(message);
+        setMessageList((messageList) => [...messageList, message]);
       });
+      channel
+        .join()
+        .receive("ok", (resp) => {
+          console.log("Joined successfully", resp);
+          setChatChannel(channel);
+        })
+        .receive("error", (resp) => {
+          console.log("Unable to join", resp);
+        });
     }
-  }, [chatChannel, userId, addMessageToChat]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatChannel, socket]);
 
   useEffect(() => {
     initializeChat();
   }, [initializeChat]);
 
+  const onScroll = async () => {
+    if (
+      containerRef.current &&
+      containerRef.current.scrollTop === 0 &&
+      page > 0
+    ) {
+      setIsFetching(true);
+      const nextPage = await getNextPage(parseInt(params["chatId"]!), page);
+      if (nextPage.length === 0) {
+        setIsFetching(false);
+        setPage(-1);
+        return;
+      }
+      setPage(page + 1);
+      setMessageList([...nextPage, ...messageList]);
+    }
+  };
+
   useEffect(() => {
-    if(bottomRef.current)
-      bottomRef.current.scrollIntoView({behavior: "smooth"})
-  }, [messageList, containerRef])
+    if (bottomRef.current)
+      if (!isFetching) bottomRef.current.scrollIntoView({ behavior: "smooth" });
+      else setIsFetching(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messageList, containerRef.current]);
 
   const ButtonIcon: React.FC = () => {
     return <Image w="17px" src={sendIcon} />;
@@ -180,6 +199,7 @@ export const ChatView: React.FC = () => {
       <Text fontSize={{ base: "2xl", md: "4xl" }}>
         {userText(chat?.users!)}
       </Text>
+
       <Flex
         my="5vh"
         overflowX="hidden"
@@ -188,13 +208,24 @@ export const ChatView: React.FC = () => {
         flexDir="column"
         h="100vh"
         ref={containerRef}
+        onScroll={onScroll}
       >
+        <Spinner
+          thickness="20px"
+          speed="1s"
+          emptyColor="gray.200"
+          color="blue.200"
+          size="md"
+          margin="auto"
+          mt="10px"
+          borderRadius="10"
+          visibility={isFetching ? "visible" : "hidden"}
+        />
         {messageList &&
           messageList.map((message) => (
-            <MessageItem message={message} key={message.at} />
+            <MessageItem message={message} key={message.id} />
           ))}
-          <div style={{ float:"left", clear: "both" }} ref={bottomRef}>
-        </div>
+        <div style={{ float: "left", clear: "both" }} ref={bottomRef}></div>
       </Flex>
 
       <InputGroup width={{ base: "90%", md: "35%" }} h="60px">
@@ -204,7 +235,7 @@ export const ChatView: React.FC = () => {
           backgroundColor="white"
           onChange={handleInputChange}
           onKeyPress={(e) => handleEnterPress(e)}
-          isDisabled={!chatChannel}
+          isDisabled={!(chatChannel && chatChannel.state === "joined")}
         />
         <InputRightElement width="-40px">
           <Button
@@ -212,7 +243,7 @@ export const ChatView: React.FC = () => {
             colorScheme="blue"
             rightIcon={<ButtonIcon />}
             onClick={() => handleSend()}
-            isDisabled={!chatChannel}
+            isDisabled={!(chatChannel && chatChannel.state === "joined")}
           >
             Send
           </Button>
