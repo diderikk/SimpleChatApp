@@ -18,6 +18,6 @@ alias Backend.Medias
 Accounts.create_user(%{name: "Test", email: "test123@test.com", password: "Password123"})
 user1 = Repo.get(User, 1)
 {:ok, user2} = Accounts.create_user(%{name: "Test1", email: "test13@test.com", password: "Password123"})
-chat1 = Accounts.add_user_chat(user1.id, [user2.id])
+chat1 = Accounts.add_user_chat(user1.id, [user2.email])
 
-Medias.send_message(user1, chat1.id, %{content: "Test message"})
+Medias.persist_message(user1.id, chat1.id, %{content: "Test message"})

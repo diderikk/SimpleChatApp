@@ -126,7 +126,8 @@ defmodule Backend.Accounts do
         join: u in "users_chats",
         on: c.id == u.chat_id and u.user_id == ^user_id,
         select: {c, u.has_accepted},
-        preload: [users: ^@user_query, messages: ^@message_query]
+        preload: [users: ^@user_query, messages: ^@message_query],
+        order_by: [desc: c.inserted_at]
     )
 
     Enum.map(chats,

@@ -30,6 +30,7 @@ defmodule BackendWeb.UserView do
     %{
       id: chat.id,
       users: chat.users,
+      message: ""
     }
   end
 
