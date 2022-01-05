@@ -22,6 +22,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/chatlist" element={<ChatList />} />
           <Route path="/chats/:chatId" element={<ChatView />} />
+          <Route path="/" element={<ChatList />} />
         </Routes>
       </Router>
     </Center>
