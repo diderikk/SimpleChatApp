@@ -3,6 +3,7 @@ defmodule Backend.Plug.InterceptRefresh do
 
   def init(opts), do: opts
 
+  @spec call(Plug.Conn.t(), keyword) :: Plug.Conn.t()
   def call(conn, opts) do
     with {:ok, token} <- fetch_token_from_header(conn, opts),
          {:ok, %{"typ" => "access", "token_version" => _token_version}} <-

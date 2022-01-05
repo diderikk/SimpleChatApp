@@ -1,4 +1,7 @@
 defmodule Backend.AuthErrorHandler do
+  @moduledoc """
+    Handler for errors during the auth pipeline
+  """
   import Plug.Conn
 
   @behaviour Guardian.Plug.ErrorHandler
