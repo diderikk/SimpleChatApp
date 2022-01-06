@@ -1,23 +1,31 @@
-defmodule Backend.ChatChannel do
+defmodule BackendWeb.ChatChannel do
   use Phoenix.Channel
 
   alias Backend.Medias.Message
   alias Backend.Medias
+  alias BackendWeb.Presence
 
   def join("chat:" <> chat_id, _params, socket) do
     user = Backend.Accounts.get_user!(socket.assigns.user_id)
+
     case Backend.Authorization.authorize_chat(user, String.to_integer(chat_id)) do
       true ->
-        send(self(), :joined)
+        send(self(), :after_join)
         {:ok, assign(socket, :chat_id, String.to_integer(chat_id))}
+
       _ ->
         {:error, %{reason: "Forbidden"}}
     end
   end
 
-  @spec handle_info(:joined, Phoenix.Socket.t()) :: {:noreply, Phoenix.Socket.t()}
-  def handle_info(:joined, socket) do
-    push(socket, "joined", %{user: socket.assigns.user_name})
+  @spec handle_info(:after_join, Phoenix.Socket.t()) :: {:noreply, Phoenix.Socket.t()}
+  def handle_info(:after_join, socket) do
+    {:ok, _} =
+      Presence.track(socket, socket.assigns.user_id, %{
+        online_at: inspect(System.system_time(:second))
+      })
+
+    push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
   end
 

@@ -11,7 +11,8 @@ function App() {
     <Center
       h="100vh"
       w="100%"
-      py="30px"
+      pb="10px"
+      pt="30px"
       bg="tomato"
       color="white"
       fontSize="2xl"

@@ -16,7 +16,7 @@ import { Chat } from "../interfaces/chat.interface";
 import { getChat, getChannelToken, getNextPage } from "../utils/actions";
 import { navigate } from "../utils/routing";
 import sendIcon from "../assets/send.png";
-import { Socket, Channel } from "phoenix";
+import { Socket, Channel, Presence } from "phoenix";
 import { Message } from "../interfaces/message.interface";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 
@@ -26,6 +26,11 @@ interface MessageInput {
   user: string;
   at: string;
   user_id: number;
+}
+
+interface PresenceUser {
+  id: string;
+  user: string;
 }
 
 export const ChatView: React.FC = () => {
@@ -44,6 +49,8 @@ export const ChatView: React.FC = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
+  const [presence, setPresence] = useState<Presence>(null!);
+  const [presentUsers, setPresentUsers] = useState<PresenceUser[]>([]);
 
   const userText = useCallback((users: string[]) => {
     let text = users.join(", ");
@@ -103,7 +110,7 @@ export const ChatView: React.FC = () => {
 
   useEffect(() => {
     if (!chatChannel && socket) {
-      const channel = socket.channel("chat:" + parseInt(params["chatId"]!), {});
+      const channel = socket.channel("chat:" + parseInt(params["chatId"]!));
       channel.on("joined", (resp) => {
         console.log("Joined", resp);
       });
@@ -118,6 +125,7 @@ export const ChatView: React.FC = () => {
         .join()
         .receive("ok", (resp) => {
           console.log("Joined successfully", resp);
+          setPresence(new Presence(channel));
           setChatChannel(channel);
         })
         .receive("error", (resp) => {
@@ -130,6 +138,17 @@ export const ChatView: React.FC = () => {
   useEffect(() => {
     initializeChat();
   }, [initializeChat]);
+
+  useEffect(() => {
+    if (presence) {
+      presence.onSync(() => {
+        setPresentUsers([]);
+        presence.list((id, { user }) => {
+          setPresentUsers((presentUsers) => [...presentUsers, { id, user }]);
+        });
+      });
+    }
+  }, [presence]);
 
   const onScroll = async () => {
     if (
@@ -186,15 +205,14 @@ export const ChatView: React.FC = () => {
     <Center
       h="100%"
       w="100%"
-      py="30px"
       justifyContent="flex-start"
       flexDirection="column"
     >
       <ArrowBackIcon
         fontSize={{ base: "2xl", md: "4xl" }}
         position="absolute"
-        left="100px"
-        top="67px"
+        left={{ base: "50px", md: "100px" }}
+        top="37px"
         onClick={() => navigate("/chatlist")}
         cursor="pointer"
       />
@@ -224,14 +242,14 @@ export const ChatView: React.FC = () => {
           borderRadius="10"
           visibility={isFetching ? "visible" : "hidden"}
         />
-        {messageList &&
-          messageList.map((message) => (
-            <MessageItem message={message} key={message.id} />
-          ))}
+          {messageList &&
+            messageList.map((message) => (
+              <MessageItem message={message} key={message.id} />
+            ))}
         <div style={{ float: "left", clear: "both" }} ref={bottomRef}></div>
       </Flex>
 
-      <InputGroup width={{ base: "90%", md: "35%" }} h="60px">
+      <InputGroup width={{ base: "90%", md: "35%" }} h="60px" mb="10px">
         <Input
           color="black"
           value={messageInput}
@@ -252,6 +270,9 @@ export const ChatView: React.FC = () => {
           </Button>
         </InputRightElement>
       </InputGroup>
+      <Text color="gray.400" fontSize="md">
+        Online: {presentUsers.map((user) => user.user).join(", ")}
+      </Text>
     </Center>
   );
 };

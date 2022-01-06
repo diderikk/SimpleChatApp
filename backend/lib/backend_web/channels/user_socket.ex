@@ -1,9 +1,9 @@
-defmodule Backend.UserSocket do
+defmodule BackendWeb.UserSocket do
   use Phoenix.Socket
 
   alias Backend.Accounts
 
-  channel "chat:*", Backend.ChatChannel
+  channel "chat:*", BackendWeb.ChatChannel
 
   def connect(%{"token" => token}, socket, _connect_info) do
     case Backend.Guardian.decode_and_verify(token) do

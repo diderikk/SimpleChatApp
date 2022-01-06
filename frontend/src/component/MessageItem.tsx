@@ -25,13 +25,13 @@ export const MessageItem: React.FC<Props> = ({
     <Flex
       flexDirection="column"
       mb="20px"
-      ml={isMe ? { base: "55%", sm: "50%", md: "65%" } : "0"}
-      w={{ base: "150px", sm: "150px", md: "180px", lg: "230px", xl: "300px" }}
+      ml={isMe ? {base: "67%", lg:"75%", "2xl": "80%"} : "0"}
+      w={{base: "33%", lg: "25%", "2xl": "20%",}}
     >
       <Text
         px="7px"
         userSelect="none"
-        fontSize={{ base: "0.7rem", md: "0.9rem" }}
+        fontSize={{ base: "0.8rem",sm: "0.8rem", md: "0.9rem" }}
       >
         {user}
       </Text>
@@ -39,14 +39,14 @@ export const MessageItem: React.FC<Props> = ({
         backgroundColor="blue.400"
         borderRadius="lg"
         p="10px"
-        fontSize={{ base: "0.8rem", md: "1.1rem" }}
+        fontSize={{ base: "0.9rem", sm: "1rem", md: "1.1rem"}}
       >
         <Text>{content}</Text>
       </Box>
       <Text
         px="7px"
         userSelect="none"
-        fontSize={{ base: "0.7rem", md: "0.9rem" }}
+        fontSize={{ base: "0.8rem",sm: "0.8rem", md: "0.9rem" }}
       >
         {chatDate(at)}
       </Text>

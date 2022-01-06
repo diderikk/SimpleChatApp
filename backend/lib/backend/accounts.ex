@@ -14,6 +14,27 @@ defmodule Backend.Accounts do
   @message_query from m in Message, order_by: [desc: m.inserted_at], select: [:content]
 
   @doc """
+  Gets users from an array of ids
+
+  ## Examples
+
+    iex> get_users_from_ids([1,2,3])
+
+    [
+      %User{},
+      ...
+    ]
+  """
+  @spec get_users_from_ids(list()) :: list(%User{})
+  def get_users_from_ids(ids) do
+    Repo.all(
+      from u in User,
+      where: u.id in ^ids,
+      select: {u.id, u.name}
+    ) |> Enum.into(%{})
+  end
+
+  @doc """
   Gets a single user.
 
   Raises `Ecto.NoResultsError` if the User does not exist.
