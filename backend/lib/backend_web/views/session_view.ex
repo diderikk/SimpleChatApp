@@ -16,12 +16,13 @@ defmodule BackendWeb.SessionView do
       user: %{
         id: user.id,
         name: user.name,
-        email: user.email,
+        email: user.email
       }
     }
   end
 
-  def render("channel.json", %{token: token, user_id: user_id}), do: %{token: token, user_id: user_id}
+  def render("channel.json", %{token: token, user_id: user_id}),
+    do: %{token: token, user_id: user_id}
 
   def render("403.json", _params) do
     %{

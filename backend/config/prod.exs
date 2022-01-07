@@ -12,7 +12,10 @@ import Config
 config :backend, BackendWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   url: [host: "simple-chat-app.gigalixirapp.com"],
-  check_origin: ["https://simple-chat-app.gigalixirapp.com/"]
+  check_origin: [
+    "https://simple-chat-app.gigalixirapp.com/",
+    "http://localhost:3000"
+  ]
 
 # Do not print debug messages in production
 config :logger, level: :info

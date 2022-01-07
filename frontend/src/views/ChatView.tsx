@@ -19,6 +19,7 @@ import sendIcon from "../assets/send.png";
 import { Socket, Channel, Presence } from "phoenix";
 import { Message } from "../interfaces/message.interface";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { APIHost } from "../utils/axios_instance";
 
 interface MessageInput {
   id: number;
@@ -92,7 +93,7 @@ export const ChatView: React.FC = () => {
 
   useEffect(() => {
     if (!socket && channelToken) {
-      const socket = new Socket("ws://localhost:4000/socket", {
+      const socket = new Socket(`ws://${APIHost}/socket`, {
         params: { token: channelToken },
       });
       socket.onError(async () => {
@@ -242,10 +243,10 @@ export const ChatView: React.FC = () => {
           borderRadius="10"
           visibility={isFetching ? "visible" : "hidden"}
         />
-          {messageList &&
-            messageList.map((message) => (
-              <MessageItem message={message} key={message.id} />
-            ))}
+        {messageList &&
+          messageList.map((message) => (
+            <MessageItem message={message} key={message.id} />
+          ))}
         <div style={{ float: "left", clear: "both" }} ref={bottomRef}></div>
       </Flex>
 

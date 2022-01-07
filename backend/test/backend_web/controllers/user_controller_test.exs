@@ -23,6 +23,7 @@ defmodule BackendWeb.UserControllerTest do
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
         |> get(Routes.user_path(conn, :chat_list))
+        |> doc(description: "Gets a users chats")
 
       assert %{
                "chats" => [
@@ -47,6 +48,7 @@ defmodule BackendWeb.UserControllerTest do
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
         |> post(Routes.user_path(conn, :create_chat), %{user_list: []})
+        |> doc(description: "Creates a new chat")
 
       assert %{
                "id" => id,
@@ -65,6 +67,7 @@ defmodule BackendWeb.UserControllerTest do
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
         |> post(Routes.user_path(conn, :create_chat), %{user_list: [email]})
+        |> doc(description: "Creates a new chat with another user")
 
       assert %{
                "id" => id,
@@ -82,6 +85,7 @@ defmodule BackendWeb.UserControllerTest do
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
         |> post(Routes.user_path(conn, :create_chat), %{user_list: ["not_a_user@gmail.com"]})
+        |> doc(description: "Creates a new chat with a non-existing user")
 
       assert %{
                "id" => id,
@@ -96,21 +100,28 @@ defmodule BackendWeb.UserControllerTest do
 
   describe "handle invitation" do
     setup [:create_invited_user]
+
     test "accept chat invitation", %{conn: conn, chat: %Chat{id: chat_id}, user: %User{} = user} do
       conn =
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
         |> put(Routes.user_path(conn, :accept_chat, chat_id))
+        |> doc(description: "Accept a chat invitation")
 
       assert "" = json_response(conn, 200)
       assert [{_chat, true}] = Backend.Accounts.get_chats(user.id)
     end
 
-    test "accept non existing chat invitation", %{conn: conn, chat: %Chat{id: chat_id}, user: %User{} = user} do
+    test "accept non existing chat invitation", %{
+      conn: conn,
+      chat: %Chat{id: chat_id},
+      user: %User{} = user
+    } do
       conn =
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
-        |> put(Routes.user_path(conn, :accept_chat, chat_id+1))
+        |> put(Routes.user_path(conn, :accept_chat, chat_id + 1))
+        |> doc(description: "Accept non-existing a chat invitation")
 
       assert "" = json_response(conn, 404)
       assert [{_chat, false}] = Backend.Accounts.get_chats(user.id)
@@ -121,21 +132,26 @@ defmodule BackendWeb.UserControllerTest do
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
         |> delete(Routes.user_path(conn, :accept_chat, chat_id))
+        |> doc(description: "Decline a chat invitation")
 
       assert "" = json_response(conn, 200)
       assert [] = Backend.Accounts.get_chats(user.id)
     end
 
-    test "delete not existing chat invitation", %{conn: conn, chat: %Chat{id: chat_id}, user: %User{} = user} do
+    test "delete not existing chat invitation", %{
+      conn: conn,
+      chat: %Chat{id: chat_id},
+      user: %User{} = user
+    } do
       conn =
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
-        |> delete(Routes.user_path(conn, :accept_chat, chat_id+1))
+        |> delete(Routes.user_path(conn, :accept_chat, chat_id + 1))
+        |> doc(description: "Decline non-existing a chat invitation")
 
       assert "" = json_response(conn, 404)
       assert [{_chat, false}] = Backend.Accounts.get_chats(user.id)
     end
-
   end
 
   defp create_user(_) do

@@ -46,7 +46,10 @@ defmodule Backend.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:pbkdf2_elixir, "~> 1.4"},
       {:guardian, "~> 2.0"},
-      {:cors_plug, "~> 2.0"}
+      {:cors_plug, "~> 2.0"},
+      {:bureaucrat, github: "api-hogs/bureaucrat", only: :test},
+      {:poison, "~> 3.0", only: :test},
+      {:credo, "~> 1.6", only: [:dev], runtime: false}
     ]
   end
 

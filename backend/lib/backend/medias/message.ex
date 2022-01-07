@@ -1,4 +1,7 @@
 defmodule Backend.Medias.Message do
+  @moduledoc """
+    Schema for Message struct
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

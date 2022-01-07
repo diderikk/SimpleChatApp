@@ -26,7 +26,6 @@ defmodule BackendWeb.ChatView do
     }
   end
 
-
   def render("401.json", %{reason: reason}) do
     render_one(reason, ErrorView, "401.json")
   end
@@ -36,5 +35,4 @@ defmodule BackendWeb.ChatView do
       error: "Forbidden"
     }
   end
-
 end

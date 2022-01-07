@@ -5,7 +5,7 @@ defmodule BackendWeb.UserView do
   def render("chat_list.json", %{chats: chats, invited_chats: invited_chats}) do
     %{
       chats: render_many(chats, UserView, "chat.json", as: :chat),
-      invited_chats: render_many(invited_chats, UserView, "chat.json", as: :chat),
+      invited_chats: render_many(invited_chats, UserView, "chat.json", as: :chat)
     }
   end
 
@@ -13,16 +13,22 @@ defmodule BackendWeb.UserView do
     %{
       id: user.id,
       name: user.name,
-      email: user.email,
+      email: user.email
     }
   end
 
   def render("chat.json", %{chat: {chat, _}}) do
     message = List.first(chat.messages)
+
     %{
       id: chat.id,
       users: chat.users,
-      message: if message do message.content else "" end
+      message:
+        if message do
+          message.content
+        else
+          ""
+        end
     }
   end
 
@@ -37,6 +43,4 @@ defmodule BackendWeb.UserView do
   def render("none.json", _params) do
     ""
   end
-
-
 end

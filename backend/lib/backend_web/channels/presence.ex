@@ -12,7 +12,6 @@ defmodule BackendWeb.Presence do
   alias Backend.Accounts
 
   def fetch(_topic, presences) do
-    IO.inspect presences
     users = presences |> Map.keys() |> Accounts.get_users_from_ids()
 
     for {key, %{metas: metas}} <- presences, into: %{} do

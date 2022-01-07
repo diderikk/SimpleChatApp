@@ -1,4 +1,8 @@
 defmodule Backend.Plug.InterceptRefresh do
+  @moduledoc """
+    Plug used to return a new access token when a user sends
+    a expired access token with a verified refresh token
+  """
   import Plug.Conn
 
   def init(opts), do: opts

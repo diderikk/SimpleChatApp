@@ -4,7 +4,7 @@ defmodule BackendWeb.SessionController do
   alias Backend.Accounts
   alias Backend.Accounts.User
 
-  action_fallback BackendWeb.FallbackController
+  action_fallback(BackendWeb.FallbackController)
 
   @spec signin(any, map) :: {:error, binary()} | Plug.Conn.t()
   def signin(conn, %{"email" => email, "password" => password}) do
@@ -44,13 +44,13 @@ defmodule BackendWeb.SessionController do
   def channel_token(conn, %{"id" => chat_id}) do
     with user <- Backend.Guardian.Plug.current_resource(conn),
          {:ok, channel_token, _claims} <- Backend.Guardian.create_channel_token(user, chat_id) do
-          if Backend.Authorization.authorize_chat(user, String.to_integer(chat_id)) do
-            render(conn, "channel.json", token: channel_token, user_id: user.id)
-          else
-            conn
-            |> put_status(:forbidden)
-            |> render("403.json")
-          end
+      if Backend.Authorization.authorize_chat(user, String.to_integer(chat_id)) do
+        render(conn, "channel.json", token: channel_token, user_id: user.id)
+      else
+        conn
+        |> put_status(:forbidden)
+        |> render("403.json")
+      end
     else
       _ ->
         conn
@@ -61,7 +61,15 @@ defmodule BackendWeb.SessionController do
 
   @spec put_refresh_cookie(Plug.Conn.t(), binary()) :: Plug.Conn.t()
   def put_refresh_cookie(conn, refresh_token) do
-    conn
-    |> put_resp_cookie("guardian_default_token", refresh_token, http_only: true, encrypt: true)
+    case Mix.env() do
+      :prod ->
+        conn
+        |> put_resp_cookie("guardian_default_token", refresh_token,
+           http_only: true, encrypt: true, secure: true)
+
+      _ ->
+        conn
+        |> put_resp_cookie("guardian_default_token", refresh_token, http_only: true, encrypt: true)
+    end
   end
 end

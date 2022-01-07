@@ -10,6 +10,7 @@ defmodule BackendWeb.UserSocket do
       {:ok, %{"sub" => user_id}} ->
         socket = assign(socket, :user_name, Accounts.get_user!(String.to_integer(user_id)).name)
         {:ok, assign(socket, :user_id, String.to_integer(user_id))}
+
       {:error, _reason} ->
         :error
     end

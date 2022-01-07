@@ -25,13 +25,14 @@ defmodule Backend.Accounts do
       ...
     ]
   """
-  @spec get_users_from_ids(list()) :: list(%User{})
+  @spec get_users_from_ids(list()) :: list(User.t())
   def get_users_from_ids(ids) do
     Repo.all(
       from u in User,
-      where: u.id in ^ids,
-      select: {u.id, u.name}
-    ) |> Enum.into(%{})
+        where: u.id in ^ids,
+        select: {u.id, u.name}
+    )
+    |> Enum.into(%{})
   end
 
   @doc """
@@ -48,7 +49,7 @@ defmodule Backend.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_user!(number()) :: %User{}
+  @spec get_user!(number()) :: User.t()
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
@@ -63,7 +64,7 @@ defmodule Backend.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create_user(map()) :: {:ok, %User{}} | {:error, %Ecto.Changeset{}}
+  @spec create_user(map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.registration_changeset(attrs)
@@ -82,7 +83,7 @@ defmodule Backend.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec update_user(%User{}, map()) :: {:ok, %User{}} | {:error, %Ecto.Changeset{}}
+  @spec update_user(User.t(), map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
@@ -98,7 +99,7 @@ defmodule Backend.Accounts do
       %Ecto.Changeset{data: %User{}}
 
   """
-  @spec change_user(%User{}, map()) :: %Ecto.Changeset{data: %User{}}
+  @spec change_user(User.t(), map()) :: Ecto.Changeset.t()
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
@@ -142,17 +143,26 @@ defmodule Backend.Accounts do
   """
   @spec get_chats(number()) :: list()
   def get_chats(user_id) do
-    chats = Repo.all(
-      from c in Chat,
-        join: u in "users_chats",
-        on: c.id == u.chat_id and u.user_id == ^user_id,
-        select: {c, u.has_accepted},
-        preload: [users: ^@user_query, messages: ^@message_query],
-        order_by: [desc: c.inserted_at]
-    )
+    chats =
+      Repo.all(
+        from c in Chat,
+          join: u in "users_chats",
+          on: c.id == u.chat_id and u.user_id == ^user_id,
+          select: {c, u.has_accepted},
+          preload: [users: ^@user_query, messages: ^@message_query],
+          order_by: [desc: c.inserted_at]
+      )
 
-    Enum.map(chats,
-    fn {chat, has_accepted} -> {Map.put(chat, :messages, if(List.first(chat.messages) != nil, do: [List.first(chat.messages)], else: [])), has_accepted} end)
+    Enum.map(
+      chats,
+      fn {chat, has_accepted} ->
+        {Map.put(
+           chat,
+           :messages,
+           if(List.first(chat.messages) != nil, do: [List.first(chat.messages)], else: [])
+         ), has_accepted}
+      end
+    )
   end
 
   @doc """
@@ -164,7 +174,7 @@ defmodule Backend.Accounts do
     %Backend.Medias.Chat{}
 
   """
-  @spec add_user_chat(number(), list()) :: %Chat{}
+  @spec add_user_chat(number(), list()) :: Chat.t()
   def add_user_chat(user_id, user_email_list) when is_list(user_email_list) do
     user_id_list = Repo.all(from u in User, where: u.email in ^user_email_list, select: u.id)
     chat = Repo.insert!(%Chat{})

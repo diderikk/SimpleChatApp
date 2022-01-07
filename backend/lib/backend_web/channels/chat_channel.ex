@@ -1,4 +1,7 @@
 defmodule BackendWeb.ChatChannel do
+  @moduledoc """
+    Implementation for a chat channel using Phoenix Channel
+  """
   use Phoenix.Channel
 
   alias Backend.Medias.Message
@@ -30,19 +33,20 @@ defmodule BackendWeb.ChatChannel do
   end
 
   def handle_in("message", %{"content" => content} = params, socket) do
-    with {:ok, %Message{inserted_at: at, id: id}} <-
-           Medias.persist_message(socket.assigns.user_id, socket.assigns.chat_id, params) do
-      broadcast!(socket, "message", %{
-        id: id,
-        content: content,
-        user: socket.assigns.user_name,
-        at: at,
-        user_id: socket.assigns.user_id
-      })
+    case Medias.persist_message(socket.assigns.user_id, socket.assigns.chat_id, params) do
+      {:ok, %Message{inserted_at: at, id: id}} ->
+        broadcast!(socket, "message", %{
+          id: id,
+          content: content,
+          user: socket.assigns.user_name,
+          at: at,
+          user_id: socket.assigns.user_id
+        })
 
-      {:reply, :ok, socket}
-    else
-      {:error, changeset} -> {:reply, {:error, %{errors: changeset}}, socket}
+        {:reply, :ok, socket}
+
+      {:error, changeset} ->
+        {:reply, {:error, %{errors: changeset}}, socket}
     end
   end
 end

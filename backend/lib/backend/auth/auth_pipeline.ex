@@ -1,7 +1,11 @@
 defmodule Backend.AuthAccessPipeline do
-  use Guardian.Plug.Pipeline, otp_app: :backend,
-  module: Backend.Guardian,
-  error_handler: Backend.AuthErrorHandler
+  @moduledoc """
+    Module for a authentication pipeline using Guardian
+  """
+  use Guardian.Plug.Pipeline,
+    otp_app: :backend,
+    module: Backend.Guardian,
+    error_handler: Backend.AuthErrorHandler
 
   import Guardian.Plug, only: [find_token_from_cookies: 2]
   alias Backend.Accounts.User
@@ -21,22 +25,25 @@ defmodule Backend.AuthAccessPipeline do
 
   plug :verify_token_version
 
-
-
-
-
   defp verify_token_version(conn, opts) do
     {:ok, token} = find_token_from_cookies(conn, opts)
-    {:ok, %{"token_version" => token_version_from_token}} = Backend.Guardian.decode_and_verify(token, %{})
+
+    {:ok, %{"token_version" => token_version_from_token}} =
+      Backend.Guardian.decode_and_verify(token, %{})
+
     %User{token_version: user_token_version} = Backend.Guardian.Plug.current_resource(conn)
+
     if token_version_from_token == user_token_version do
-       conn
+      conn
     else
       conn
       |> Guardian.Plug.Pipeline.fetch_error_handler!(opts)
-      |> apply(:auth_error, [conn, {:unauthenticated, "Token version from cookie token did not match user token"}, opts])
+      |> apply(:auth_error, [
+        conn,
+        {:unauthenticated, "Token version from cookie token did not match user token"},
+        opts
+      ])
       |> Guardian.Plug.maybe_halt(opts)
     end
-
   end
 end

@@ -1,4 +1,7 @@
 defmodule Backend.Accounts.User do
+  @moduledoc """
+    Schema for User struct
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

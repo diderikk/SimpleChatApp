@@ -1,4 +1,7 @@
 defmodule Backend.Medias.Chat do
+  @moduledoc """
+    Schema for Chat struct
+  """
   use Ecto.Schema
 
   schema "chats" do

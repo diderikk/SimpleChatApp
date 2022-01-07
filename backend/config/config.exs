@@ -17,7 +17,7 @@ config :backend, BackendWeb.Endpoint,
   pubsub_server: Backend.PubSub,
   live_view: [signing_salt: "uxCfrTwc"]
 
-  config :backend, Backend.Guardian,
+config :backend, Backend.Guardian,
   allowed_algos: ["HS512"],
   issuer: "Backend",
   verify_issuer: true,

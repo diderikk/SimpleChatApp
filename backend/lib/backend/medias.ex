@@ -25,7 +25,7 @@ defmodule Backend.Medias do
       iex> get_chat!(456)
       ** (Ecto.NoResultsError)
   """
-  @spec get_chat!(number(), number()) :: %Chat{}
+  @spec get_chat!(number(), number()) :: Chat.t()
   def get_chat!(chat_id, user_id) do
     message_query =
       from m in Message,
@@ -45,8 +45,7 @@ defmodule Backend.Medias do
 
     messages =
       Enum.reverse(chat.messages)
-      |> Enum.map(fn message -> Map.put_new(message, :is_me, user_id == message.user_id)
-      end)
+      |> Enum.map(fn message -> Map.put_new(message, :is_me, user_id == message.user_id) end)
 
     Map.put(chat, :messages, messages)
   end
@@ -92,7 +91,7 @@ defmodule Backend.Medias do
 
   """
   @spec persist_message(number(), number(), map()) ::
-          {:ok, %Message{}} | {:error, %Ecto.Changeset{}}
+          {:ok, Message.t()} | {:error, Ecto.Changeset.t()}
   def persist_message(user_id, chat_id, attrs) do
     %Message{user_id: user_id, chat_id: chat_id}
     |> Message.changeset(attrs)

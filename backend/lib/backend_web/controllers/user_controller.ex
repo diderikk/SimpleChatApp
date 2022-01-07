@@ -11,8 +11,7 @@ defmodule BackendWeb.UserController do
     chats = Accounts.get_chats(user.id)
     {part_of, invited_to} = Enum.split_with(chats, fn {_chat, has_accepted} -> has_accepted end)
 
-
-    render(conn, "chat_list.json", [chats: part_of, invited_chats: invited_to])
+    render(conn, "chat_list.json", chats: part_of, invited_chats: invited_to)
   end
 
   @spec create_chat(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -29,13 +28,11 @@ defmodule BackendWeb.UserController do
   def accept_chat(conn, %{"id" => chat_id}) do
     chat_id = String.to_integer(chat_id)
     user = Backend.Guardian.Plug.current_resource(conn)
+
     case Accounts.accept_chat(user.id, chat_id) do
       {1, _} -> conn |> put_status(:ok) |> render("none.json")
-
       {0, _} -> conn |> put_status(:not_found) |> render("none.json")
-
       _ -> conn |> put_status(500) |> render("none.json")
-
     end
   end
 
@@ -43,13 +40,11 @@ defmodule BackendWeb.UserController do
   def decline_chat(conn, %{"id" => chat_id}) do
     chat_id = String.to_integer(chat_id)
     user = Backend.Guardian.Plug.current_resource(conn)
+
     case Accounts.decline_chat(user.id, chat_id) do
       {1, _} -> conn |> put_status(:ok) |> render("none.json")
-
       {0, _} -> conn |> put_status(:not_found) |> render("none.json")
-
       _ -> conn |> put_status(500) |> render("none.json")
-
     end
   end
 end

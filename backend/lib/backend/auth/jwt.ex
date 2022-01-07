@@ -1,4 +1,8 @@
 defmodule Backend.Guardian do
+  @moduledoc """
+    Configuartion for Guardian implementation and
+    other authentication functions
+  """
   use Guardian, otp_app: :backend
 
   alias Backend.Accounts.User
@@ -46,19 +50,21 @@ defmodule Backend.Guardian do
       iex> create_access_and_refresh_tokens(user)
       {access_token, refresh_token}
   """
-  @spec create_access_and_refresh_tokens(map()) :: {binary(), binary()}
+  @spec create_access_and_refresh_tokens(User.t()) :: {binary(), binary()}
   def create_access_and_refresh_tokens(%User{} = user) do
     access_token =
-      Guardian.encode_and_sign(user, %{token_version: user.token_version}, token_type: "access") |> elem(1)
+      Guardian.encode_and_sign(user, %{token_version: user.token_version}, token_type: "access")
+      |> elem(1)
 
     refresh_token =
-      Guardian.encode_and_sign(user, %{token_version: user.token_version}, token_type: "refresh") |> elem(1)
+      Guardian.encode_and_sign(user, %{token_version: user.token_version}, token_type: "refresh")
+      |> elem(1)
 
     {access_token, refresh_token}
   end
 
-  @spec create_channel_token(%User{}, any) :: {:error, any} | {:ok, binary, map}
+  @spec create_channel_token(User.t(), any) :: {:error, any} | {:ok, binary, map}
   def create_channel_token(%User{} = user, chat_id) do
-   Guardian.encode_and_sign(user, %{chat_id: chat_id}, token_type: "channel", ttl: {3, :minutes})
+    Guardian.encode_and_sign(user, %{chat_id: chat_id}, token_type: "channel", ttl: {3, :minutes})
   end
 end
