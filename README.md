@@ -67,6 +67,9 @@ Currently only implemented for backend. CI runs on every push to master branch. 
 ### Backend
 Hosted on [Gigalixir](https://www.gigalixir.com/)
 
+### Frontend
+Hosted on [Vercel](https://vercel.com/)
+
 
 
 

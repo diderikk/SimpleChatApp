@@ -1,7 +1,9 @@
 import axios from "axios";
 import { navigate } from "./routing";
 
-export const APIHost = "simple-chat-app.gigalixirapp.com";
+const isDev = true
+
+export const APIHost = isDev ? "localhost:4000": "simple-chat-app.gigalixirapp.com";
 
 const instance = axios.create({
   baseURL: `https://${APIHost}/api`,

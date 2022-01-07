@@ -5,6 +5,7 @@ import { ChatList } from "./views/ChatList";
 import { Center } from "@chakra-ui/react";
 import { history } from "./utils/routing";
 import { ChatView } from "./views/ChatView";
+import { Page404 } from "./views/404";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/chatlist" element={<ChatList />} />
           <Route path="/chats/:chatId" element={<ChatView />} />
           <Route path="/" element={<ChatList />} />
+          <Route path="*" element={<Page404 />} />
         </Routes>
       </Router>
     </Center>
