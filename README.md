@@ -10,6 +10,7 @@ API Documentation: [API-Docs](backend/docs/APIDOCS.md)
 2. [Functionality](#functionality)
 3. [Continous Integration](#continous-integration)
 4. [ER diagram](#er-diagram)
+5. [Deployment](#deployment)
 
 ## Introduction
 SimpleChatApp is a full stack application I made for trying out Elixir/Phoenix as a API framework. Users are able to sign up and sign in. After signing in, the user can create new chats and invite other users. Currently not implemented a method for inviting users to existing chats. Chatting functionality is implemented using Phoenix Channels and websockets. The user must be authorized to enter a chat.
@@ -46,14 +47,26 @@ SimpleChatApp is a full stack application I made for trying out Elixir/Phoenix a
 * If the above succeeds the user can chat via websockets
 * API server keeps count of present/connected users, written under input bar
 
+#### Chat page
+![](./assets/chat.gif) 
+
+### Chat list
+* Chats into a invited tab and a chat tab
+* User can accept or decline an invite to a chat
+* Users can create new chats and add other users by email
+
 #### Create chat and invite user
 ![](./assets/createchat.gif)   
 
-#### Chat page
-![](./assets/chat.gif)   
-
+### Presence
+* API server keeps track of present/connected users to a given channel
+* When a user opens a chat page it connects to a websocket and is added to a presence list
+* When a user leaves, it is removed from the presence list
+* The list appears under the input bar
 #### Present users (bottom grey text)
 ![](./assets/presence.gif)
+
+### Dashboard
 
 ## Continous Integration
 Currently only implemented for backend. CI runs on every push to master branch. It starts a local PostgreSQL server to use as a test database. It then performs the unit/integration tests written in the /backend/test folder. Contains tests for all endpoints. These were used to create the API Endpoint documentation by using 
@@ -65,7 +78,7 @@ Currently only implemented for backend. CI runs on every push to master branch. 
 
 ## Deployment
 ### Backend
-Hosted on [Gigalixir](https://www.gigalixir.com/)
+Hosted on [Gigalixir](https://www.gigalixir.com/). It creates a free PostgreSQL database, and automatically handles free Let's Encrypt TLS certificate.
 
 ### Frontend
 Hosted on [Vercel](https://vercel.com/)
