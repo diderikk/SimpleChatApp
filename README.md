@@ -2,7 +2,7 @@
 
 A simple chat application made with Elixir/Phoenix, PostgreSQL and React with Chakra UI  
 Made by: [diderikk](https://github.com/diderikk)  
-API-URL: [simple-chat-app.gigalixirapp.com/](https://simple-chat-app.gigalixirapp.com/)
+API-URL: [simple-chat-app.gigalixirapp.com/](https://simple-chat-app.gigalixirapp.com/)  
 API Documentation: [API-Docs](backend/docs/APIDOCS.md)
 
 ## Content
@@ -16,7 +16,7 @@ API Documentation: [API-Docs](backend/docs/APIDOCS.md)
 
 ## Introduction
 
-SimpleChatApp is a full stack application I made for trying out Elixir/Phoenix as a API framework. Users are able to sign up and sign in. After signing in, the user can create new chats and invite other users. Currently not implemented a method for inviting users to existing chats. Chatting functionality is implemented using Phoenix Channels and websockets. The user must be authorized to enter a chat.
+SimpleChatApp is a full stack application made for trying out Elixir/Phoenix as a API framework. Users are able to sign up and sign in. After signing in, the user can create new chats and invite other users. Currently not implemented a method for inviting users to existing chats. Chatting functionality is implemented using Phoenix Channels and websockets. The user must be authorized to enter a chat.
 
 ## Functionality
 
@@ -29,6 +29,8 @@ SimpleChatApp is a full stack application I made for trying out Elixir/Phoenix a
 - Returns an access and refresh token
 
 ### Sign in
+
+- Returns an access and refresh token
 
 ![](./assets/signup.gif)
 
@@ -64,6 +66,8 @@ SimpleChatApp is a full stack application I made for trying out Elixir/Phoenix a
 - Chats into a invited tab and a chat tab
 - User can accept or decline an invite to a chat
 - Users can create new chats and add other users by email
+- Users can not create a new chat without any other users
+- Users can create a chat with themselves
 
 #### Create chat and invite user
 
@@ -110,7 +114,8 @@ Hosted on [Vercel](https://vercel.com/)
 ## Installation manual
 
 ### Backend
-You need 6 system environment variables for the Phoenix application to run: 
+
+You need 6 system environment variables for the Phoenix application to run:
 
 ```
 export SECRET_KEY_BASE="secret"
@@ -120,12 +125,13 @@ export POSTGRES_PASSWORD="password"
 export DASHBOARD_USERNAME="admin"
 export DASHBOARD_PASSWORD="password"
 ```
-Tip: Use phx.gen.secret secret_length to create random strings   
-   
+
+Tip: Use phx.gen.secret secret_length to create random strings
+
 To run the application: [Manual](backend/README.md)
 
 ## Frontend
-Change isDev in [axiosInstance](frontend/src/utils/axiosInstance.ts) to true  
-  
-To run the application: [Manual](frontend/README.md)
 
+Change isDev in [axiosInstance](frontend/src/utils/axiosInstance.ts) to true
+
+To run the application: [Manual](frontend/README.md)
