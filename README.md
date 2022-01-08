@@ -12,6 +12,7 @@ API Documentation: [API-Docs](backend/docs/APIDOCS.md)
 3. [Continous Integration](#continous-integration)
 4. [ER diagram](#er-diagram)
 5. [Deployment](#deployment)
+6. [Installation Manual](#installation-manual)
 
 ## Introduction
 
