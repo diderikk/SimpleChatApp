@@ -2,6 +2,7 @@ defmodule BackendWeb.UserController do
   use BackendWeb, :controller
 
   alias Backend.Accounts
+  alias Backend.Medias.Chat
 
   action_fallback BackendWeb.FallbackController
 
@@ -17,11 +18,17 @@ defmodule BackendWeb.UserController do
   @spec create_chat(Plug.Conn.t(), map) :: Plug.Conn.t()
   def create_chat(conn, %{"user_list" => user_list}) do
     user = Backend.Guardian.Plug.current_resource(conn)
-    new_chat = Accounts.add_user_chat(user.id, user_list)
+    case Accounts.add_user_chat(user.id, user_list) do
+      %Chat{} = chat ->
+        conn
+        |> put_status(:created)
+        |> render("chat.json", chat: chat)
 
-    conn
-    |> put_status(:created)
-    |> render("chat.json", chat: new_chat)
+      {:error, reason} ->
+        conn
+        |> put_status(:bad_request)
+        |> render("400.json", reason: reason)
+    end
   end
 
   @spec accept_chat(Plug.Conn.t(), map()) :: Plug.Conn.t()

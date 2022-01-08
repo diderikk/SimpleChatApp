@@ -67,6 +67,9 @@ SimpleChatApp is a full stack application I made for trying out Elixir/Phoenix a
 ![](./assets/presence.gif)
 
 ### Dashboard
+* Phoenix creates a dashboard for admins  
+
+![](./assets/dashboard.png)
 
 ## Continous Integration
 Currently only implemented for backend. CI runs on every push to master branch. It starts a local PostgreSQL server to use as a test database. It then performs the unit/integration tests written in the /backend/test folder. Contains tests for all endpoints. These were used to create the API Endpoint documentation by using 
@@ -78,7 +81,7 @@ Currently only implemented for backend. CI runs on every push to master branch. 
 
 ## Deployment
 ### Backend
-Hosted on [Gigalixir](https://www.gigalixir.com/). It creates a free PostgreSQL database, and automatically handles free Let's Encrypt TLS certificate.
+Hosted on [Gigalixir](https://www.gigalixir.com/). It creates a free PostgreSQL database, and automatically handles a free Let's Encrypt TLS certificate.
 
 ### Frontend
 Hosted on [Vercel](https://vercel.com/)

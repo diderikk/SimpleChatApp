@@ -1,17 +1,18 @@
 import axios from "axios";
 import { navigate } from "./routing";
 
-const isDev = true
+const isDev = true;
 
-export const APIHost = isDev ? "localhost:4000": "simple-chat-app.gigalixirapp.com";
+export const APIHost = isDev
+  ? "localhost:4000"
+  : "simple-chat-app.gigalixirapp.com";
 
 const instance = axios.create({
-  baseURL: `https://${APIHost}/api`,
+  baseURL: isDev ? `http://${APIHost}/api` : `https://${APIHost}/api`,
   withCredentials: true,
 });
 
 instance.defaults.headers.common["Content-Type"] = "application/json";
-instance.defaults.timeout = 3 * 1000;
 
 const token = localStorage.getItem("token");
 //Adds token to Authorization header if it is not null
@@ -35,6 +36,10 @@ instance.interceptors.response.use(undefined, (error) => {
       error.config.headers!["Authorization"] =
         "Bearer " + error.response.data["new_token"];
       return instance.request(error.config);
+    } else if (
+      error.config.url === "/signin" ||
+      error.config.url === "/signup"
+    ) {
     } else {
       navigate("/signin");
     }

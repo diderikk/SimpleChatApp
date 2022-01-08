@@ -7,7 +7,7 @@ defmodule Backend.MediasFixtures do
   @doc """
   Generate a chat.
   """
-  def chat_fixture(user_id) do
-    Backend.Accounts.add_user_chat(user_id, [])
+  def chat_fixture(user_id, user_email) do
+    Backend.Accounts.add_user_chat(user_id, [user_email])
   end
 end

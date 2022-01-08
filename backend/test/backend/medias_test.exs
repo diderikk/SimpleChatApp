@@ -11,7 +11,7 @@ defmodule Backend.MediasTest do
 
     test "get_chat!/2 returns the chat given with id" do
       id = user_fixture().id
-      chat = chat_fixture(id)
+      chat = chat_fixture(id, user_fixture().email)
       chat =
       chat
       |> Map.put(:messages, [])
@@ -22,7 +22,7 @@ defmodule Backend.MediasTest do
 
     test "persist_message/3 persists a message in a chat from a user" do
       user = user_fixture()
-      chat = chat_fixture(user.id)
+      chat = chat_fixture(user.id, user_fixture().email)
       assert {:ok, %Message{} = message} = Medias.persist_message(user.id, chat.id, %{content: "Test"})
       assert is_map(message)
       assert message.content == "Test"

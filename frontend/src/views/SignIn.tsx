@@ -27,9 +27,11 @@ export const SignIn: React.FC = () => {
     if (!signedIn) {
       setIsLoading(false);
       setSignInError("Wrong email or password");
-      return;
+      event.preventDefault();
+
     }
-    navigate("/chatlist");
+    else 
+      navigate("/chatlist");
   };
 
   return (
@@ -46,7 +48,7 @@ export const SignIn: React.FC = () => {
       <Text fontSize="6xl" userSelect="none" mb="10vh">
         Sign In
       </Text>
-      <form onSubmit={(event) => handleSubmit(event)}>
+      <form onSubmit={handleSubmit}>
         <Center flexDirection="column" h="25vh">
           <Input
             name="email"
@@ -74,7 +76,7 @@ export const SignIn: React.FC = () => {
             mb="25px"
           />
           <Spacer />
-          <Center h="10vh">
+          <Center h="10vh" flexDir="column">
             <Button
               cursor="pointer"
               colorScheme="cyan"

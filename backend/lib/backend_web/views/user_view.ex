@@ -43,4 +43,10 @@ defmodule BackendWeb.UserView do
   def render("none.json", _params) do
     ""
   end
+
+  def render("400.json", %{reason: reason}) do
+    %{
+      reason: reason
+    }
+  end
 end

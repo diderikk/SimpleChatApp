@@ -10,8 +10,8 @@ defmodule Backend.Accounts do
   alias Backend.Medias.Chat
   alias Backend.Medias.Message
 
-  @user_query from u in User, select: u.name
-  @message_query from m in Message, order_by: [desc: m.inserted_at], select: [:content]
+  @user_query from(u in User, select: u.name)
+  @message_query from(m in Message, order_by: [desc: m.inserted_at], select: [:content])
 
   @doc """
   Gets users from an array of ids
@@ -28,9 +28,10 @@ defmodule Backend.Accounts do
   @spec get_users_from_ids(list()) :: list(User.t())
   def get_users_from_ids(ids) do
     Repo.all(
-      from u in User,
+      from(u in User,
         where: u.id in ^ids,
         select: {u.id, u.name}
+      )
     )
     |> Enum.into(%{})
   end
@@ -145,12 +146,13 @@ defmodule Backend.Accounts do
   def get_chats(user_id) do
     chats =
       Repo.all(
-        from c in Chat,
+        from(c in Chat,
           join: u in "users_chats",
           on: c.id == u.chat_id and u.user_id == ^user_id,
           select: {c, u.has_accepted},
           preload: [users: ^@user_query, messages: ^@message_query],
           order_by: [desc: c.inserted_at]
+        )
       )
 
     Enum.map(
@@ -173,17 +175,27 @@ defmodule Backend.Accounts do
 
     %Backend.Medias.Chat{}
 
+    iex> add_user_chat(1, [])
+
+    {:error, reason}
+
   """
   @spec add_user_chat(number(), list()) :: Chat.t()
   def add_user_chat(user_id, user_email_list) when is_list(user_email_list) do
-    user_id_list = Repo.all(from u in User, where: u.email in ^user_email_list, select: u.id)
-    chat = Repo.insert!(%Chat{})
-    creator = [%{user_id: user_id, chat_id: chat.id, has_accepted: true}]
-    invited_users = Enum.map(user_id_list, fn id -> %{user_id: id, chat_id: chat.id} end)
-    Repo.insert_all("users_chats", creator ++ invited_users)
+    user_id_list = Repo.all(from(u in User, where: u.email in ^user_email_list, select: u.id))
 
-    chat
-    |> Repo.preload(users: @user_query)
+    if Enum.empty?(user_id_list) do
+      {:error, "Empty invite list"}
+    else
+      chat = Repo.insert!(%Chat{})
+      creator = [%{user_id: user_id, chat_id: chat.id, has_accepted: true}]
+      invited_users = Enum.map(user_id_list, fn id -> %{user_id: id, chat_id: chat.id} end)
+      |> Enum.reject(fn user_chat -> user_chat.user_id == user_id end)
+      Repo.insert_all("users_chats", creator ++ invited_users)
+
+      chat
+      |> Repo.preload(users: @user_query)
+    end
   end
 
   @doc """
@@ -212,7 +224,20 @@ defmodule Backend.Accounts do
   """
   @spec decline_chat(number(), number()) :: {number(), nil | list()}
   def decline_chat(user_id, chat_id) do
-    from(uc in "users_chats", where: uc.chat_id == ^chat_id and uc.user_id == ^user_id)
-    |> Repo.delete_all()
+    members = from(uc in "users_chats", where: uc.chat_id == ^chat_id, select: [:user_id])
+    |> Repo.all()
+
+    if length(members) == 2 do
+      from(uc in "users_chats", where: uc.chat_id == ^chat_id)
+      |> Repo.delete_all()
+      from(m in Message, where: m.chat_id == ^chat_id)
+      |> Repo.delete_all()
+      from(c in Chat, where: c.id == ^chat_id)
+      |> Repo.delete_all()
+      {1, nil}
+    else
+      from(uc in "users_chats", where: uc.chat_id == ^chat_id and uc.user_id == ^user_id)
+      |> Repo.delete_all()
+    end
   end
 end

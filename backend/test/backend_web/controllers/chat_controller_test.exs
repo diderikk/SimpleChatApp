@@ -88,7 +88,7 @@ defmodule BackendWeb.ChatControllerTest do
 
   defp create_chat(_) do
     user = user_fixture()
-    chat = chat_fixture(user.id)
+    chat = chat_fixture(user.id, user_fixture().email)
 
     %{chat: chat, user: user}
   end

@@ -12,6 +12,7 @@ import { ChatListItem } from "../component/ChatListItem";
 import { SelectButton } from "../component/SelectButton";
 import { InvitedListItem } from "../component/InvitedListItem";
 import { CreateChatModal } from "../component/CreateChatModal";
+import { navigate } from "../utils/routing";
 
 export const ChatList: React.FC = () => {
   const [chatList, setChatList] = useState<ListChat[]>([]);
@@ -61,6 +62,7 @@ export const ChatList: React.FC = () => {
 
   const fetchChatList = useCallback(async () => {
     const response = await getUserList();
+    if(!response) navigate("/signin")
     console.log(response);
     setChatList(response?.chats!);
     setInvitedList(response?.invited_chats!);
@@ -125,7 +127,7 @@ export const ChatList: React.FC = () => {
           Create
         </Button>
       </HStack>
-      <CreateChatModal onClose={onClose} isOpen={isOpen} addChatListItem={addChatListItem} />
+      <CreateChatModal onCloseProp={onClose} isOpen={isOpen} addChatListItem={addChatListItem} />
 
       {chatSelected ? chatListMapped : invitedListMapped}
     </Center>

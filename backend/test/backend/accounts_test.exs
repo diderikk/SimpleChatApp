@@ -80,8 +80,8 @@ defmodule Backend.AccountsTest do
 
     test "get_user_chats/1 returns all users in chat" do
       user = user_fixture()
-      chat = chat_fixture(user.id)
-      chat = Map.put(chat, :users, [user.name])
+      chat = chat_fixture(user.id, user_fixture().email)
+      chat = Map.put(chat, :users, [user.name, user.name])
       chat = Map.put(chat, :messages, [])
 
       assert Accounts.get_chats(user.id) == [{chat, true}]
@@ -94,8 +94,8 @@ defmodule Backend.AccountsTest do
 
     test "add_user_chat/2 returns a chat with the creator as a member" do
       user = user_fixture()
-      chat = Accounts.add_user_chat(user.id, [])
-      chat = Map.put(chat, :users, [user.name])
+      chat = Accounts.add_user_chat(user.id, [user_fixture().email])
+      chat = Map.put(chat, :users, [user.name, user.name])
       chat = Map.put(chat, :messages, [])
 
       assert Accounts.get_chats(user.id) == [{chat, true}]

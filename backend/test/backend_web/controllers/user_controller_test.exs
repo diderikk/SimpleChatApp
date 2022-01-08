@@ -30,6 +30,7 @@ defmodule BackendWeb.UserControllerTest do
                  %{
                    "id" => ^id,
                    "users" => [
+                     ^name,
                      ^name
                    ],
                    "message" => ""
@@ -47,13 +48,13 @@ defmodule BackendWeb.UserControllerTest do
       conn =
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
-        |> post(Routes.user_path(conn, :create_chat), %{user_list: []})
+        |> post(Routes.user_path(conn, :create_chat), %{user_list: [user_fixture().email]})
         |> doc(description: "Creates a new chat")
 
       assert %{
                "id" => id,
                "users" => [
-                 ^name
+                 ^name, ^name
                ]
              } = json_response(conn, 201)
 
@@ -80,7 +81,7 @@ defmodule BackendWeb.UserControllerTest do
       assert is_number(id)
     end
 
-    test "create user chat with non-existing users", %{conn: conn, user: %User{name: name} = user} do
+    test "create user chat with non-existing users", %{conn: conn, user: %User{} = user} do
       conn =
         conn
         |> Backend.Guardian.Plug.put_current_resource(user)
@@ -88,13 +89,8 @@ defmodule BackendWeb.UserControllerTest do
         |> doc(description: "Creates a new chat with a non-existing user")
 
       assert %{
-               "id" => id,
-               "users" => [
-                 ^name
-               ]
-             } = json_response(conn, 201)
-
-      assert is_number(id)
+        "reason" => "Empty invite list"
+      } = json_response(conn, 400)
     end
   end
 
@@ -161,7 +157,7 @@ defmodule BackendWeb.UserControllerTest do
 
   defp create_chat(_) do
     user = user_fixture()
-    chat = chat_fixture(user.id)
+    chat = chat_fixture(user.id, user_fixture().email)
 
     %{chat: chat, user: user}
   end

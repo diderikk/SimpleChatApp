@@ -130,7 +130,7 @@ defmodule BackendWeb.SessionControllerTest do
     setup [:create_user]
 
     test "renders channel token", %{conn: conn, user: %User{id: user_id} = user} do
-      chat = chat_fixture(user_id)
+      chat = chat_fixture(user_id, user_fixture().email)
 
         conn =
         conn

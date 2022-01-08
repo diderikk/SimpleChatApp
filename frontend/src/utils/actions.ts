@@ -109,29 +109,40 @@ export const getChat = async (chatId: number): Promise<Chat | undefined> => {
   }
 };
 
-export const getChannelToken = async (chatId: number): Promise<TokenResponse | undefined> => {
-  try{
-    const response = await axios.get<TokenResponse>(`/chats/${chatId}/channel_token`);
+export const getChannelToken = async (
+  chatId: number
+): Promise<TokenResponse | undefined> => {
+  try {
+    const response = await axios.get<TokenResponse>(
+      `/chats/${chatId}/channel_token`
+    );
     return response.data;
-  } catch(error) {
+  } catch (error) {
     return undefined;
   }
-}
+};
 
-export const getNextPage = async (chatId: number, page: number): Promise<Message[]> => {
-  try{
+export const getNextPage = async (
+  chatId: number,
+  page: number
+): Promise<Message[]> => {
+  try {
     const response = await axios.get<Message[]>(`/chats/${chatId}/${page}`);
     return response.data;
-  } catch(error) {
+  } catch (error) {
     return [];
   }
-}
+};
 
-export const createChat = async (userEmails: string[]): Promise<ListChat | undefined> => {
-  try{
-    const response = await axios.post<ListChat>("/users/chats", {user_list: userEmails});
+export const createChat = async (
+  userEmails: string[]
+): Promise<ListChat | undefined> => {
+  try {
+    const response = await axios.post<ListChat>("/users/chats", {
+      user_list: userEmails,
+    });
     return response.data;
-  } catch(error) {
+  } catch (error) {
     return undefined;
   }
-}
+};

@@ -16,6 +16,9 @@ import {
   FormErrorMessage,
   SimpleGrid,
   Center,
+  HStack,
+  VStack,
+  Text,
 } from "@chakra-ui/react";
 import { ChangeEvent, useRef, useState } from "react";
 import ListChat from "../interfaces/listChat.interface";
@@ -23,25 +26,26 @@ import { createChat } from "../utils/actions";
 
 interface Props {
   isOpen: boolean;
-  onClose: () => void;
+  onCloseProp: () => void;
   addChatListItem: (chatListItem: ListChat) => void;
 }
 
 export const CreateChatModal: React.FC<Props> = ({
   isOpen,
-  onClose,
+  onCloseProp,
   addChatListItem,
 }) => {
   const [userEmails, setUserEmails] = useState<string[]>([]);
   const [emailInput, setEmailInput] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
+  const [isCreateError, setIsCreateError] = useState<boolean>(false);
   const initialRef = useRef<HTMLInputElement>(null);
 
   const handleAddEmail = () => {
     console.log(emailInput);
     if (emailInput === "") return;
     if (
-      /^[^\s]+@[^\s]+$/i.test(emailInput) &&
+      /^[A-Za-z0-9+_.-]+@(.+)$/.test(emailInput) &&
       !userEmails.includes(emailInput)
     ) {
       setUserEmails((emails) => [emailInput, ...emails]);
@@ -66,9 +70,18 @@ export const CreateChatModal: React.FC<Props> = ({
     setEmailInput(event.target.value);
   };
 
+  const onClose = () => {
+    onCloseProp();
+    setIsError(false);
+    setIsCreateError(false);
+  }
+
   const handleCreate = async () => {
     const newChat = await createChat(userEmails);
-    if (!newChat) return;
+    if (!newChat){
+      setIsCreateError(true);
+      return;
+    }
 
     addChatListItem(newChat);
     setUserEmails([]);
@@ -120,6 +133,7 @@ export const CreateChatModal: React.FC<Props> = ({
                 p="5px 10px"
                 borderRadius="lg"
                 justifyContent="space-between"
+                key={email}
               >
                 {email}
                 <Button
@@ -136,10 +150,19 @@ export const CreateChatModal: React.FC<Props> = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => handleCreate()}>
-            Create
-          </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <VStack>
+            <HStack>
+              <Button colorScheme="blue" mr={3} onClick={() => handleCreate()}>
+                Create
+              </Button>
+              <Button onClick={onClose}>Cancel</Button>
+            </HStack>
+            {isCreateError && (
+              <Text fontSize="sm" color="red">
+                Check that at least one email exists
+              </Text>
+            )}
+          </VStack>
         </ModalFooter>
       </ModalContent>
     </Modal>
