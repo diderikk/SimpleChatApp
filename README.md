@@ -130,7 +130,7 @@ Tip: Use phx.gen.secret secret_length to create random strings
 
 To run the application: [Manual](backend/README.md)
 
-## Frontend
+### Frontend
 
 Change isDev in [axiosInstance](frontend/src/utils/axiosInstance.ts) to true
 
