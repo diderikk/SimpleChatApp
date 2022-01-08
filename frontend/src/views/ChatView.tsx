@@ -19,7 +19,7 @@ import sendIcon from "../assets/send.png";
 import { Socket, Channel, Presence } from "phoenix";
 import { Message } from "../interfaces/message.interface";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { APIHost } from "../utils/axios_instance";
+import { APIHost } from "../utils/axiosInstance";
 
 interface MessageInput {
   id: number;

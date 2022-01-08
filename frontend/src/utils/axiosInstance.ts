@@ -1,7 +1,7 @@
 import axios from "axios";
 import { navigate } from "./routing";
 
-const isDev = true;
+const isDev = false;
 
 export const APIHost = isDev
   ? "localhost:4000"

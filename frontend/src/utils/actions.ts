@@ -1,4 +1,4 @@
-import axios from "./axios_instance";
+import axios from "./axiosInstance";
 import UserInterface from "../interfaces/user.interface";
 import User from "../interfaces/user.interface";
 import ListChat from "../interfaces/listChat.interface";
