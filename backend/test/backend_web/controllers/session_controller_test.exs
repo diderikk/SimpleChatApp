@@ -133,10 +133,10 @@ defmodule BackendWeb.SessionControllerTest do
       chat = chat_fixture(user_id, user_fixture().email)
 
         conn =
-        conn
-        |> Backend.Guardian.Plug.put_current_resource(user)
-        |> get(Routes.session_path(conn, :channel_token, chat.id))
-        |> doc(description: "Gets a channel token")
+          conn
+          |> Backend.Guardian.Plug.put_current_resource(user)
+          |> get(Routes.session_path(conn, :channel_token, chat.id))
+          |> doc(description: "Gets a channel token")
 
       assert %{
                "token" => token,
