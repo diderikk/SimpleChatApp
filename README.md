@@ -2,6 +2,7 @@
 
 A simple chat application made with Elixir/Phoenix, PostgreSQL and React with Chakra UI  
 Made by: [diderikk](https://github.com/diderikk)  
+Website: [https://simplechatapp.pages.dev/](https://simplechatapp.pages.dev/)  
 API-URL: [simple-chat-app.gigalixirapp.com/](https://simple-chat-app.gigalixirapp.com/)  
 API Documentation: [API-Docs](backend/docs/APIDOCS.md)
 
@@ -68,6 +69,7 @@ SimpleChatApp is a full stack application made for trying out Elixir/Phoenix as 
 - Users can create new chats and add other users by email
 - Users can not create a new chat without any other users
 - Users can create a chat with themselves
+- Users are able to create chats with the same members multiple times
 
 #### Create chat and invite user
 
@@ -109,7 +111,7 @@ Hosted on [Gigalixir](https://www.gigalixir.com/). It creates a free PostgreSQL 
 
 ### Frontend
 
-Hosted on [Vercel](https://vercel.com/)
+Hosted on [Cloudflare](https://cloudflare.com), at: [https://simplechatapp.pages.dev/](https://simplechatapp.pages.dev/)
 
 ## Installation manual
 
