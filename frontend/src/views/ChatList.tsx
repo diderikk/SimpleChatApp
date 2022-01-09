@@ -63,7 +63,6 @@ export const ChatList: React.FC = () => {
   const fetchChatList = useCallback(async () => {
     const response = await getUserList();
     if(!response) navigate("/signin")
-    console.log(response);
     setChatList(response?.chats!);
     setInvitedList(response?.invited_chats!);
     setIsLoading(false);

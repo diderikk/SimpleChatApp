@@ -125,13 +125,9 @@ export const ChatView: React.FC = () => {
       channel
         .join()
         .receive("ok", (resp) => {
-          console.log("Joined successfully", resp);
           setPresence(new Presence(channel));
           setChatChannel(channel);
         })
-        .receive("error", (resp) => {
-          console.log("Unable to join", resp);
-        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatChannel, socket]);

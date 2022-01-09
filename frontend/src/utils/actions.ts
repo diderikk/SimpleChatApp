@@ -84,7 +84,6 @@ export const acceptInvitation = async (chatId: number): Promise<boolean> => {
     await axios.put(`/users/invited_chats/${chatId}`);
     return true;
   } catch (error) {
-    console.log(error);
     return false;
   }
 };
@@ -94,7 +93,6 @@ export const declineInvitation = async (chatId: number): Promise<boolean> => {
     await axios.delete(`/users/invited_chats/${chatId}`);
     return true;
   } catch (error) {
-    console.log(error);
     return false;
   }
 };

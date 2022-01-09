@@ -14,7 +14,8 @@ config :backend, BackendWeb.Endpoint,
   url: [host: "simple-chat-app.gigalixirapp.com"],
   check_origin: [
     "https://simple-chat-app.gigalixirapp.com/",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://simplechatapp.pages.dev/"
   ]
 
 # Do not print debug messages in production

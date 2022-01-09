@@ -42,7 +42,6 @@ export const CreateChatModal: React.FC<Props> = ({
   const initialRef = useRef<HTMLInputElement>(null);
 
   const handleAddEmail = () => {
-    console.log(emailInput);
     if (emailInput === "") return;
     if (
       /^[A-Za-z0-9+_.-]+@(.+)$/.test(emailInput) &&
