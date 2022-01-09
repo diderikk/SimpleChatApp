@@ -115,7 +115,7 @@ Hosted on [Vercel](https://vercel.com/)
 
 ### Backend
 
-You need 6 system environment variables for the Phoenix application to run:
+You need 6 system environment variables and a local postgreSQL database for the Phoenix application to run:
 
 ```
 export SECRET_KEY_BASE="secret"
