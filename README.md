@@ -3,7 +3,7 @@
 A simple chat application made with Elixir/Phoenix, PostgreSQL and React with Chakra UI  
 Made by: [diderikk](https://github.com/diderikk)  
 Website: [https://simplechatapp.pages.dev/](https://simplechatapp.pages.dev/)  
-API-URL: [simple-chat-app.gigalixirapp.com/](https://simple-chat-app.gigalixirapp.com/)  
+API-URL: [https://elixirapi.me:4001/](https://elixirapi.me:4001/)  
 API Documentation: [API-Docs](backend/docs/APIDOCS.md)
 
 ## Content

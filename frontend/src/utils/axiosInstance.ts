@@ -5,7 +5,7 @@ export const isDev = false;
 
 export const APIHost = isDev
   ? "localhost:4000"
-  : "simple-chat-app.gigalixirapp.com";
+  : "elixirapi.me:4001";
 
 const instance = axios.create({
   baseURL: isDev ? `http://${APIHost}/api` : `https://${APIHost}/api`,
