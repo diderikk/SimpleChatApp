@@ -40,8 +40,8 @@ export const validatePassword = (
   let hasNumber = false;
   let hasCapitalLetter = false;
   Array.from(password).forEach((char) => {
-    if (char === char.toUpperCase()) hasCapitalLetter = true;
     if (/^\d+$/.test(char)) hasNumber = true;
+    else if (char === char.toUpperCase()) hasCapitalLetter = true;
   });
   if (password.trim().length === 0) {
     setPasswordError("Password field is empty");
@@ -50,7 +50,7 @@ export const validatePassword = (
     setPasswordError("Password must contain 8 characters");
     return false;
   } else if (!hasCapitalLetter || !hasNumber) {
-	setPasswordError("Missing numbers and capital letters");
+    setPasswordError("Missing numbers and capital letters");
     return false;
   } else {
     setPasswordError("");
@@ -70,5 +70,3 @@ export const validateConfirmPassword = (
   setConfirmPasswordError("");
   return true;
 };
-
-
