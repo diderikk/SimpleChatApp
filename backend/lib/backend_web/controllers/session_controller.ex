@@ -61,7 +61,7 @@ defmodule BackendWeb.SessionController do
 
   @spec put_refresh_cookie(Plug.Conn.t(), binary()) :: Plug.Conn.t()
   def put_refresh_cookie(conn, refresh_token) do
-    case Mix.env() do
+    case Application.get_env(:backend, :env) do
       :prod ->
         conn
         |> put_resp_cookie("guardian_default_token", refresh_token,

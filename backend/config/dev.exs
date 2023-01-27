@@ -18,7 +18,14 @@ config :backend, Backend.Repo,
 config :backend, BackendWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4000],
+  https: [
+    ip: {0, 0, 0, 0},
+    port: 4001,
+    cipher_suite: :strong,
+    keyfile: "priv/cert/privkey.pem",
+    certfile: "priv/cert/fullchain.pem"
+  ],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

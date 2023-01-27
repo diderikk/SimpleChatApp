@@ -10,13 +10,21 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :backend, BackendWeb.Endpoint,
-  cache_static_manifest: "priv/static/cache_manifest.json",
-  url: [host: "simple-chat-app.gigalixirapp.com"],
+  url: [host: "localhost", port: 4001],
   check_origin: [
-    "https://simple-chat-app.gigalixirapp.com/",
+    "https://elixirapi.me/",
     "http://localhost:3000",
     "https://simplechatapp.pages.dev/"
-  ]
+  ],
+  # https: [
+  #   ip: {0, 0, 0, 0},
+  #   port: 4001,
+  #   cipher_suite: :strong,
+  #   keyfile: "priv/cert/privkey.pem",
+  #   certfile: "priv/cert/fullchain.pem"
+  # ],
+  # force_ssl: [rewrite_on: [:x_forwarded_proto]],
+  secret_key_base: System.fetch_env!("SECRET_KEY_BASE")
 
 # Do not print debug messages in production
 config :logger, level: :info

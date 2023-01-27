@@ -10,6 +10,8 @@ import Config
 config :backend,
   ecto_repos: [Backend.Repo]
 
+config :backend, env: config_env()
+
 # Configures the endpoint
 config :backend, BackendWeb.Endpoint,
   url: [host: "localhost"],
@@ -21,13 +23,15 @@ config :backend, Backend.Guardian,
   allowed_algos: ["HS512"],
   issuer: "Backend",
   verify_issuer: true,
-  secret_key: System.get_env("JWT_SECRET_KEY"),
+  secret_key: System.fetch_env!("JWT_SECRET_KEY"),
   token_ttl: %{
     "access" => {3, :minutes},
     "refresh" => {4, :days},
     "channel" => {3, :minutes}
   }
 
+config :backend, Backend.Repo,
+  ssl_opts: [log_level: :error]
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
