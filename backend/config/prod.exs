@@ -10,7 +10,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :backend, BackendWeb.Endpoint,
-  url: [host: "localhost", port: 4001],
+  url: [host: "localhost", port: 4000],
   check_origin: [
     "https://elixirapi.me/",
     "http://localhost:3000",

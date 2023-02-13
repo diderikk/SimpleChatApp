@@ -16,11 +16,12 @@ defmodule BackendWeb.Router do
     plug :basic_auth
   end
 
-  scope "/api", BackendWeb do
+  scope "/api/simplechat", BackendWeb do
     pipe_through :api
 
     post "/signin", SessionController, :signin
     post "/signup", SessionController, :signup
+    get "/hello/:name", HelloController, :hello
 
     if Mix.env() not in [:test], do: pipe_through(:auth)
     get "/users/chats", UserController, :chat_list

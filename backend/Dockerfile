@@ -80,21 +80,13 @@ RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-ENV DASHBOARD_PASSWORD "bP6RV0xsTcwPDbuQfk1NGICNSzM9rK1w5MAkUkfj/0LtfVTQKs69lZItPgxQ1MCT"
-ENV DASHBOARD_USERNAME "admin"
-ENV POSTGRES_PASSWORD "postgres"
-ENV POSTGRES_USERNAME "postgres"
-ENV JWT_SECRET_KEY "9Y+sNFtxdZ5/eGdd42OAL41xk8KuAq/ZTzUIUEEFh9yMSQSjN4sHJjRRiPm6sT9RV/dc6A7drQCpLItyM7xi84v4Hc5oXfG+IRj5"
-ENV SECRET_KEY_BASE "bwSz26OV87RRl4zdsPt26lzz+BuOeoQZFHmBCm7Bh3H1ujgc+eBfWENWwM8nbMKeYA3NOlFCpFXvDKRM/xETC3at0cLTFwPffk1O"
-ENV DATABASE_URL "ecto://postgres:postgres@localhost/chatapp"
-ENV SSL_KEY_PATH "priv/cert/privkey.pem"
-ENV SSL_CERT_PATH "priv/cert/fullchain.pem"
 
 WORKDIR "/app"
 RUN chown nobody /app
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/prod/rel/backend ./
+COPY --chown=nobody:root priv priv
 
 USER nobody
 
