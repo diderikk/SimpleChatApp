@@ -49,6 +49,6 @@ defmodule BackendWeb.Endpoint do
   plug(Plug.MethodOverride)
   plug(Plug.Head)
   plug(Plug.Session, @session_options)
-  plug(CORSPlug, origin: ["https://simplechatapp.pages.dev", "http://localhost:3000"])
+  plug(CORSPlug, origin: ["https://www.chat.elixirapi.me:30000", "http://localhost:3000", "https://chat.diderikk.dev", "https://chat.elixirapi.me:30000"])
   plug(BackendWeb.Router)
 end

@@ -2,8 +2,8 @@
 
 A simple chat application made with Elixir/Phoenix, PostgreSQL and React with Chakra UI  
 Made by: [diderikk](https://github.com/diderikk)  
-Website: [https://simplechatapp.pages.dev/](https://simplechatapp.pages.dev/)  
-API-URL: [https://elixirapi.me:4001/](https://elixirapi.me:4001/)  
+Website: [https://chat.diderikk.dev/](https://chat.diderikk.dev/)  
+API-URL: [https://elixirapi.me:30000/api/simplechat](https://elixirapi.me:30000/api/simplechat)  
 API Documentation: [API-Docs](backend/docs/APIDOCS.md)
 
 ## Content
@@ -107,11 +107,11 @@ Currently only implemented for backend. CI runs on every push to master branch. 
 
 ### Backend
 
-Hosted on [Gigalixir](https://www.gigalixir.com/). It creates a free PostgreSQL database, and automatically handles a free Let's Encrypt TLS certificate.
+Hosted in personal Kubernetes cluster.
 
 ### Frontend
 
-Hosted on [Cloudflare](https://cloudflare.com), at: [https://simplechatapp.pages.dev/](https://simplechatapp.pages.dev/)
+Hosted in personal Kubernetes cluster behind a reverse proxy.
 
 ## Installation manual
 

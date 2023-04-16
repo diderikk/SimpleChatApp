@@ -48,7 +48,10 @@ if config_env() == :prod do
     check_origin: [
       "https://elixirapi.me/",
       "http://localhost:3000",
-      "https://simplechatapp.pages.dev/"
+      "https://simplechatapp.pages.dev/",
+      "https://chat.diderikk.dev/",
+      "https://chat.elixirapi.me:30000/",
+      "https://www.chat.elixirapi.me:30000/"
     ],
     http: [
       # Enable IPv6 and bind on all interfaces.
