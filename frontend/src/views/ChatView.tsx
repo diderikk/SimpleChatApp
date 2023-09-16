@@ -93,9 +93,9 @@ export const ChatView: React.FC = () => {
 
   useEffect(() => {
     if (!socket && channelToken) {
-      const websocketLink = isDev ? `ws://${APIHost}/socket"`: `wss://${APIHost}/simplechatsocket`;
+      const websocketLink = isDev ? `ws://${APIHost}/socket`: `wss://${APIHost}/socket`;
       const socket = new Socket(websocketLink, {
-        params: { token: channelToken },
+        params: { token: window.btoa(channelToken) },
       });
       socket.onError(async () => {
         const token = await getChannelToken(parseInt(params["chatId"]!));
