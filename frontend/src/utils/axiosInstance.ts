@@ -5,10 +5,10 @@ export const isDev = false;
 
 export const APIHost = isDev
   ? "localhost:4000"
-  : "elixirapi.me:30000";
+  : "chat.diderikk.dev";
 
 const instance = axios.create({
-  baseURL: isDev ? `http://${APIHost}/api` : `https://${APIHost}/api/simplechat`,
+  baseURL: isDev ? `http://${APIHost}/api` : `https://${APIHost}/api`,
   withCredentials: true,
 });
 

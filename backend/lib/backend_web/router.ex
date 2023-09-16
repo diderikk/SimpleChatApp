@@ -16,7 +16,7 @@ defmodule BackendWeb.Router do
     plug :basic_auth
   end
 
-  scope "/api/simplechat", BackendWeb do
+  scope "/api", BackendWeb do
     pipe_through :api
 
     post "/signin", SessionController, :signin

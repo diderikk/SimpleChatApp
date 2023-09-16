@@ -46,10 +46,9 @@ if config_env() == :prod do
   config :backend, BackendWeb.Endpoint,
     url: [host: host, port: 443],
     check_origin: [
-      "https://elixirapi.me/",
       "http://localhost:3000",
-      "https://simplechatapp.pages.dev/",
       "https://chat.diderikk.dev/",
+      "https://www.chat.diderikk.dev/",
       "https://chat.elixirapi.me:30000/",
       "https://www.chat.elixirapi.me:30000/"
     ],
