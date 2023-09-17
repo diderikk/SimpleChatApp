@@ -17,6 +17,7 @@ function App() {
       bg="tomato"
       color="white"
       fontSize="2xl"
+      overflow="hidden"
     >
       <Router navigator={history} location={history.location}>
         <Routes>

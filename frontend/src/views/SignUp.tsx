@@ -83,19 +83,19 @@ export const SignUp: React.FC = () => {
     <Center
       h="100vh"
       w="100%"
-      py="30px"
       pb="10vh"
       bg="tomato"
       color="white"
       fontSize="2xl"
       flexDirection="column"
+      overflow="hidden"
     >
       <Text fontSize="6xl" userSelect="none" mb="10vh">
         Sign Up
       </Text>
       <form onSubmit={(event) => handleSubmit(event)}>
-        <Center flexDirection="column" h="40vh">
-          <Stack>
+        <Center flexDirection="column" h="100%" w="100%">
+          <Stack mb="25px" w="100%">
             <Input
               name="username"
               value={inputValues.username}
@@ -103,6 +103,7 @@ export const SignUp: React.FC = () => {
               placeholder="Username"
               onChange={setInputValues}
               size="lg"
+              w="100%"
               variant="flushed"
               isRequired={true}
               _placeholder={{ color: "white" }}
@@ -116,7 +117,7 @@ export const SignUp: React.FC = () => {
           </Stack>
 
           <Spacer />
-          <Stack>
+          <Stack mb="25px" w="100%">
             <Input
               name="email"
               value={inputValues.email}
@@ -135,7 +136,7 @@ export const SignUp: React.FC = () => {
           </Stack>
           <Spacer />
 
-          <Stack>
+          <Stack mb="25px" w="100%">
             <Input
               name="password"
               value={inputValues.password}
@@ -156,7 +157,7 @@ export const SignUp: React.FC = () => {
           </Stack>
           <Spacer />
 
-          <Stack mb="25px">
+          <Stack mb="45px" w="100%">
             <Input
               name="confirmPassword"
               value={inputValues.confirmPassword}
@@ -185,7 +186,7 @@ export const SignUp: React.FC = () => {
             colorScheme="cyan"
             type="submit"
             size="lg"
-            w="20vh"
+            w={{base: "70vw", md: "50vw", lg: "30vw", xl: "22vw"}}
             loadingText="Submitting"
             isLoading={isLoading}
             mb="10px"

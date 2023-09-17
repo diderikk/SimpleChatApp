@@ -38,7 +38,7 @@ export const SignIn: React.FC = () => {
     <Center
       h="100vh"
       w="100%"
-      py="30px"
+      pt="30px"
       pb="10vh"
       bg="tomato"
       color="white"
@@ -49,7 +49,7 @@ export const SignIn: React.FC = () => {
         Sign In
       </Text>
       <form onSubmit={handleSubmit}>
-        <Center flexDirection="column" h="25vh">
+        <Center flexDirection="column" h="100%">
           <Input
             name="email"
             value={inputValues.email}
@@ -60,6 +60,7 @@ export const SignIn: React.FC = () => {
             variant="flushed"
             isRequired={true}
             _placeholder={{ color: "white" }}
+            mb="25px"
           />
 
           <Spacer />
@@ -73,7 +74,7 @@ export const SignIn: React.FC = () => {
             variant="flushed"
             isRequired={true}
             _placeholder={{ color: "white" }}
-            mb="25px"
+            mb="45px"
           />
           <Spacer />
           <Center h="10vh" flexDir="column">
@@ -82,7 +83,7 @@ export const SignIn: React.FC = () => {
               colorScheme="cyan"
               type="submit"
               size="lg"
-              w="20vh"
+              w={{base: "70vw", md: "50vw", lg: "30vw", xl: "22vw"}}
               loadingText="Submitting"
               isLoading={isLoading}
               mb="10px"
